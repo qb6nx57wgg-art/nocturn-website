@@ -159,8 +159,10 @@ nav {
   background: rgba(232,232,232,0.55);
   margin-left: 3px;
   vertical-align: middle;
+  opacity: 0;
   animation: blink 0.75s step-end infinite;
 }
+#type-cursor.active { opacity: 1; }
 @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
 
 /* ── STAT ── */
@@ -369,8 +371,15 @@ window.addEventListener('orientationchange', function() {
 
   setTimeout(function() { label.classList.add('show'); }, 400);
 
+  // Place cursor after an element and make it visible
+  function moveCursor(afterEl) {
+    afterEl.insertAdjacentElement('afterend', cursor);
+    cursor.classList.add('active');
+  }
+
   var i = 0;
   setTimeout(function typeBefore() {
+    if (i === 0) moveCursor(elBefore); // cursor follows line 1
     elBefore.textContent = before.slice(0, ++i);
     if (i < before.length) setTimeout(typeBefore, i === 1 ? 80 : TYPE_SPD + Math.random() * 16);
     else typeWord(0, true);
@@ -379,11 +388,13 @@ window.addEventListener('orientationchange', function() {
   function typeWord(idx, first) {
     var word = words[idx];
     var j = 0;
+    moveCursor(elWord); // cursor moves to line 2
     (function typeChar() {
       elWord.textContent = word.slice(0, ++j);
       if (j < word.length) {
         setTimeout(typeChar, TYPE_SPD + Math.random() * 16);
       } else if (first) {
+        moveCursor(elAfter);
         var k = 0;
         (function typeTail() {
           elAfter.textContent = after.slice(0, ++k);
