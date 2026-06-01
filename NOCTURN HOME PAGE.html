@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Nocturn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,400;1,300;1,400&family=Geist+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  /* --vh is set by JS to window.innerHeight * 0.01 — reliable on all mobile browsers */
+  height: calc(var(--vh, 1vh) * 100);
+  background: #0c0c0c;
+}
+
+body {
+  font-family: 'Geist Mono', monospace;
+  color: #e8e8e8;
+  height: calc(var(--vh, 1vh) * 100);
+  overflow: hidden;
+  background: #0c0c0c;
+  /* Prevent iOS bounce/scroll */
+  position: fixed;
+  width: 100%;
+}
+
+/* ── CANVAS ── */
+#bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── GRAIN ── */
+#grain {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.45;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  mix-blend-mode: overlay;
+}
+
+/* ── VIGNETTE ── */
+#vignette {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,0.75) 100%);
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 10;
+  padding: 36px 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* safe area for notch phones */
+  padding-top: max(36px, env(safe-area-inset-top, 36px));
+  padding-left: max(52px, env(safe-area-inset-left, 52px));
+  padding-right: max(52px, env(safe-area-inset-right, 52px));
+}
+
+.logo {
+  font-family: 'Geist Mono', monospace;
+  font-weight: 400;
+  font-size: 17px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(232,232,232,0.85);
+  text-decoration: none;
+  user-select: none;
+}
+.logo .ls { color: rgba(232,232,232,0.4); }
+
+.nav-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(232,232,232,0.28);
+}
+.status-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(232,232,232,0.4);
+  animation: pulse 3s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:0.4;} 50%{opacity:1;} }
+
+/* ── HERO ── */
+#hero {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 52px 10vh;
+  padding-bottom: max(10vh, calc(env(safe-area-inset-bottom, 0px) + 10vh));
+  padding-left: max(52px, env(safe-area-inset-left, 52px));
+  padding-right: max(52px, env(safe-area-inset-right, 52px));
+}
+
+.hero-label {
+  font-family: 'Geist Mono', monospace;
+  font-weight: 300;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(232,232,232,0.3);
+  margin-bottom: 20px;
+  opacity: 0;
+}
+.hero-label.show { animation: fadeIn 0.7s ease forwards; }
+
+.hero-line {
+  font-family: 'Cormorant Garant', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(36px, 5.6vw, 84px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #e8e8e8;
+  max-width: 85vw;
+}
+
+.hero-slashes {
+  font-family: 'Geist Mono', monospace;
+  font-style: normal;
+  font-weight: 300;
+  font-size: clamp(15px, 1.8vw, 28px);
+  color: rgba(232,232,232,0.35);
+  margin-right: 0.1em;
+  letter-spacing: -0.04em;
+  vertical-align: 0.09em;
+}
+
+#typed-word { color: #e06c2a; font-style: italic; }
+
+#type-cursor {
+  display: inline-block;
+  width: 2px; height: 0.75em;
+  background: rgba(232,232,232,0.55);
+  margin-left: 3px;
+  vertical-align: middle;
+  animation: blink 0.75s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+/* ── STAT ── */
+.stat-pill {
+  display: inline-flex;
+  flex-direction: column;
+  margin-top: 36px;
+  opacity: 0;
+}
+.stat-pill.show { animation: fadeUp 0.8s 0.2s ease forwards; }
+
+.stat-value {
+  font-family: 'Cormorant Garant', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(26px, 2.8vw, 44px);
+  letter-spacing: -0.02em;
+  color: rgba(232,232,232,0.75);
+  line-height: 1;
+}
+
+.stat-desc {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(232,232,232,0.28);
+  margin-top: 7px;
+}
+
+/* ── CORNER ── */
+.corner-mark {
+  position: fixed;
+  bottom: 40px; right: 52px;
+  z-index: 10;
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px; font-weight: 300;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(232,232,232,0.15);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  opacity: 0;
+  animation: fadeIn 1s 3s ease forwards;
+}
+
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  nav {
+    padding: 28px 28px;
+    padding-top: max(28px, env(safe-area-inset-top, 28px));
+  }
+  .nav-status { display: none; }
+  .logo { font-size: 15px; }
+
+  #hero {
+    padding: 0 28px 8vh;
+    padding-bottom: max(8vh, calc(env(safe-area-inset-bottom, 0px) + 8vh));
+    padding-left: max(28px, env(safe-area-inset-left, 28px));
+    padding-right: max(28px, env(safe-area-inset-right, 28px));
+  }
+
+  .hero-label { font-size: 9px; letter-spacing: 0.22em; margin-bottom: 16px; }
+
+  .hero-line {
+    font-size: clamp(34px, 9vw, 58px);
+    max-width: 95vw;
+    line-height: 1.08;
+  }
+
+  .hero-slashes { font-size: clamp(14px, 3.8vw, 22px); }
+
+  .stat-pill { margin-top: 28px; }
+  .stat-value { font-size: clamp(24px, 7vw, 36px); }
+  .stat-desc { font-size: 9px; letter-spacing: 0.14em; }
+
+  .corner-mark { display: none; }
+}
+
+@media (max-width: 390px) {
+  .hero-line { font-size: clamp(30px, 8.5vw, 44px); }
+}
+
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+<div id="grain"></div>
+<div id="vignette"></div>
+
+<nav>
+  <a href="#" class="logo"><span class="ls">/</span>NOCTURN</a>
+  <div class="nav-status"><span class="status-dot"></span>Early Access</div>
+</nav>
+
+<section id="hero">
+  <div class="hero-label" id="heroLabel">Financial Risk Management</div>
+
+  <h1 class="hero-line">
+    <span class="hero-slashes">//&nbsp;</span><span id="typed-text"></span><br><span id="typed-word"></span><span id="typed-tail"></span><span id="type-cursor"></span>
+  </h1>
+
+  <div class="stat-pill" id="statPill">
+    <span class="stat-value">$4,830 AUD</span>
+    <span class="stat-desc">Avg. capital saved per month, per user</span>
+  </div>
+</section>
+
+<div class="corner-mark">Est. 2026 — Sydney</div>
+
+<script>
+/* ── VIEWPORT HEIGHT FIX (mobile Safari toolbar) ── */
+function setVh() {
+  document.documentElement.style.setProperty('--vh', window.innerHeight * 0.01 + 'px');
+}
+setVh();
+window.addEventListener('resize', setVh);
+window.addEventListener('orientationchange', function() {
+  setTimeout(setVh, 200);
+});
+
+/* ── BACKGROUND CANVAS ── */
+(function () {
+  const canvas = document.getElementById('bg');
+  const ctx = canvas.getContext('2d');
+  let W, H, dpr;
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2); // cap at 2x for performance
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width  = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+  window.addEventListener('orientationchange', function() { setTimeout(resize, 200); });
+  resize();
+
+  const layers = [
+    { shade: 14, speed: 0.00018, phase: 0.0,  amp: 0.38, vy: 0.32 },
+    { shade: 20, speed: 0.00013, phase: 1.1,  amp: 0.42, vy: 0.28 },
+    { shade: 9,  speed: 0.00022, phase: 2.3,  amp: 0.35, vy: 0.40 },
+    { shade: 26, speed: 0.00010, phase: 0.7,  amp: 0.50, vy: 0.22 },
+    { shade: 16, speed: 0.00016, phase: 3.5,  amp: 0.44, vy: 0.36 },
+    { shade: 34, speed: 0.00008, phase: 1.8,  amp: 0.30, vy: 0.18 },
+    { shade: 11, speed: 0.00020, phase: 4.1,  amp: 0.48, vy: 0.45 },
+    { shade: 22, speed: 0.00014, phase: 2.9,  amp: 0.36, vy: 0.26 },
+  ];
+
+  function drawLayer(l, tick) {
+    const pts = [];
+    for (let i = 0; i < 6; i++) {
+      const angle = l.phase + i * (Math.PI * 2 / 6) + tick * l.speed * (i % 2 === 0 ? 1 : -0.7);
+      const r = 0.3 + l.amp * 0.5 * (0.5 + 0.5 * Math.sin(tick * l.speed * 2.1 + i));
+      pts.push({
+        x: W * (0.5 + r * Math.cos(angle) * 1.4),
+        y: H * (0.5 + r * Math.sin(angle) * l.vy * 2.2)
+      });
+    }
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 0; i < pts.length; i++) {
+      const a = pts[i];
+      const b = pts[(i + 1) % pts.length];
+      ctx.quadraticCurveTo(a.x, a.y, (a.x + b.x) / 2, (a.y + b.y) / 2);
+    }
+    ctx.closePath();
+    const alpha = 0.55 + 0.35 * Math.sin(tick * l.speed * 3.1 + l.phase);
+    ctx.fillStyle = 'rgba(' + l.shade + ',' + l.shade + ',' + l.shade + ',' + alpha + ')';
+    ctx.fill();
+  }
+
+  function render(ts) {
+    ctx.fillStyle = '#0c0c0c';
+    ctx.fillRect(0, 0, W, H);
+    for (var i = 0; i < layers.length; i++) drawLayer(layers[i], ts);
+    requestAnimationFrame(render);
+  }
+
+  requestAnimationFrame(render);
+})();
+
+/* ── TYPEWRITER + CYCLING WORD ── */
+(function () {
+  var before = 'The Safest Way to Protect Your ';
+  var after  = ' Overnight';
+  var words  = ['Capital', 'Positions', 'Investments', 'Trades'];
+
+  var elBefore = document.getElementById('typed-text');
+  var elWord   = document.getElementById('typed-word');
+  var elAfter  = document.getElementById('typed-tail');
+  var cursor   = document.getElementById('type-cursor');
+  var label    = document.getElementById('heroLabel');
+  var stat     = document.getElementById('statPill');
+
+  var TYPE_SPD = 22;
+  var DEL_SPD  = 16;
+  var PAUSE    = 3000;
+
+  setTimeout(function() { label.classList.add('show'); }, 400);
+
+  var i = 0;
+  setTimeout(function typeBefore() {
+    elBefore.textContent = before.slice(0, ++i);
+    if (i < before.length) setTimeout(typeBefore, i === 1 ? 80 : TYPE_SPD + Math.random() * 16);
+    else typeWord(0, true);
+  }, 1100);
+
+  function typeWord(idx, first) {
+    var word = words[idx];
+    var j = 0;
+    (function typeChar() {
+      elWord.textContent = word.slice(0, ++j);
+      if (j < word.length) {
+        setTimeout(typeChar, TYPE_SPD + Math.random() * 16);
+      } else if (first) {
+        var k = 0;
+        (function typeTail() {
+          elAfter.textContent = after.slice(0, ++k);
+          if (k < after.length) setTimeout(typeTail, TYPE_SPD + Math.random() * 16);
+          else done(idx);
+        })();
+      } else {
+        done(idx);
+      }
+    })();
+  }
+
+  function done(idx) {
+    if (idx === 0) {
+      setTimeout(function() { stat.classList.add('show'); }, 500);
+      cursor.style.transition = 'opacity 0.4s ease';
+      cursor.style.opacity = '0';
+      setTimeout(function() { if (cursor.parentNode) cursor.parentNode.removeChild(cursor); }, 500);
+    }
+    setTimeout(function() { deleteWord(idx); }, PAUSE);
+  }
+
+  function deleteWord(idx) {
+    var word = words[idx];
+    var len = word.length;
+    (function delChar() {
+      elWord.textContent = word.slice(0, --len);
+      if (len > 0) setTimeout(delChar, DEL_SPD + Math.random() * 10);
+      else setTimeout(function() { typeWord((idx + 1) % words.length, false); }, 160);
+    })();
+  }
+})();
+</script>
+</body>
+</html>
