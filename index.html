@@ -6,7 +6,7 @@
 <title>Nocturn</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,400;1,300;1,400&family=Geist+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,400;1,300;1,400&family=Geist+Mono:wght@300;400&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -66,24 +66,23 @@ nav {
   padding: 36px 52px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  /* safe area for notch phones */
+  justify-content: flex-start;
   padding-top: max(36px, env(safe-area-inset-top, 36px));
   padding-left: max(52px, env(safe-area-inset-left, 52px));
   padding-right: max(52px, env(safe-area-inset-right, 52px));
 }
 
 .logo {
-  font-family: 'Geist Mono', monospace;
-  font-weight: 400;
-  font-size: 17px;
-  letter-spacing: 0.12em;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(232,232,232,0.85);
+  color: #ffffff;
   text-decoration: none;
   user-select: none;
 }
-.logo .ls { color: rgba(232,232,232,0.4); }
+.logo .ls { color: rgba(255,255,255,0.38); }
 
 .nav-status {
   display: flex;
@@ -259,11 +258,10 @@ nav {
 
 <nav>
   <a href="#" class="logo"><span class="ls">/</span>NOCTURN</a>
-  <div class="nav-status"><span class="status-dot"></span>Early Access</div>
 </nav>
 
 <section id="hero">
-  <div class="hero-label" id="heroLabel">Financial Risk Management</div>
+  <div class="hero-label" id="heroLabel">Institutional Risk Management</div>
 
   <h1 class="hero-line">
     <span class="hero-slashes">//&nbsp;</span><span id="typed-text"></span><br><span id="typed-word"></span><span id="typed-tail"></span><span id="type-cursor"></span>
