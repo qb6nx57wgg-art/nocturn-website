@@ -207,8 +207,8 @@ nav.nav-s1 {
 #type-cursor.active { opacity:1; }
 @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
 
-/* Mobile-only hero line breaks */
-.hero-br-1 { display:none; }
+/* Hero row wrappers — inline on desktop, block on mobile */
+.hl-row, .hl-word-wrap, .hl-tail-wrap { display:inline; }
 
 
 /* ── SHARED SECTION CONTENT ── */
@@ -313,6 +313,29 @@ nav.nav-s1 {
   max-width:360px; opacity:0; transition:opacity 0.75s cubic-bezier(0.16,1,0.3,1);
 }
 .logic-desc.show { opacity:1; }
+
+/* ── LOGIC NAV ── */
+.logic-nav {
+  display:flex; align-items:center; gap:14px; margin-top:28px;
+}
+.logic-btn {
+  font-family:'Geist Mono',monospace; font-size:14px;
+  color:rgba(232,232,232,0.45); background:none;
+  border:1px solid rgba(255,255,255,0.13); border-radius:50%;
+  width:34px; height:34px; flex-shrink:0;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:color 0.25s ease, border-color 0.25s ease;
+}
+.logic-btn:hover:not(:disabled) { color:rgba(232,232,232,0.9); border-color:rgba(255,255,255,0.32); }
+.logic-btn:disabled { opacity:0.2; cursor:default; }
+.ln-dots { display:flex; gap:6px; align-items:center; }
+.ln-dot {
+  width:4px; height:4px; border-radius:50%;
+  background:rgba(255,255,255,0.18);
+  transition:all 0.35s cubic-bezier(0.16,1,0.3,1);
+  flex-shrink:0;
+}
+.ln-dot.active { background:#e06c2a; width:14px; border-radius:2px; }
 
 /* ── S5: BROKERS ── */
 .s-brokers { flex-direction:column; }
@@ -479,7 +502,7 @@ nav.nav-s1 {
 @media (max-width:768px) {
   nav { padding:20px 24px; padding-top:max(20px,env(safe-area-inset-top,20px)); }
   .logo { font-size:18px; }
-  .nav-ea { font-size:9px; padding:7px 14px; }
+  .nav-ea { display:none; }
   #prog-track { right:10px; height:112px; width:16px; }
   .prog-dot::before { width:18px; height:18px; }
   #key-hint { display:none; }
@@ -491,12 +514,14 @@ nav.nav-s1 {
     padding-left:max(24px,env(safe-area-inset-left,24px));
     padding-right:max(24px,env(safe-area-inset-right,24px));
   }
-  /* Hero: 4 fixed rows on mobile */
-  .hero-br-1 { display:inline; }
-  #typed-word { display:block; }
-  #typed-tail { display:block; }
-  .hero-line { font-size:clamp(52px,14vw,78px); font-weight:500; color:#ffffff; max-width:95vw; line-height:1.06; }
-  .hero-slashes { font-size:clamp(13px,3.5vw,20px); }
+  /* Hero: 4 fixed rows on mobile via explicit block wrappers */
+  .hl-row { display:block; }
+  .hl-word-wrap { display:block; }
+  .hl-tail-wrap { display:block; }
+  .hero-br-desktop { display:none; }
+  .hero-word-gap { display:none; }
+  .hero-line { font-size:44px; font-weight:500; color:#ffffff; max-width:95vw; line-height:1.08; }
+  .hero-slashes { font-size:13px; }
   .early-cta { margin-top:36px; font-size:10px; }
 
   .s-content { padding:0 24px; }
@@ -554,12 +579,8 @@ nav.nav-s1 {
   .s7-footer { padding:0 24px max(36px,calc(env(safe-area-inset-bottom,0px) + 36px)); }
 }
 
-@media (max-width:430px) {
-  .hero-line { font-size:54px; }
-}
-
 @media (max-width:390px) {
-  .hero-line { font-size:50px; }
+  .hero-line { font-size:40px; }
   .s-headline { font-size:clamp(28px,8.5vw,40px); font-weight:500; color:#ffffff; }
   .s-hero {
     padding-bottom:max(18vh,calc(env(safe-area-inset-bottom,0px) + 18vh));
@@ -600,7 +621,7 @@ nav.nav-s1 {
 <div class="scene-section s-hero active" data-index="0">
   <div class="layer-mid" id="layerMid">
     <h1 class="hero-line">
-      <span class="hero-slashes">//&nbsp;</span><span id="typed-text-a"></span><br class="hero-br-1"><span id="typed-text-b"></span><br><span id="typed-word"></span><span id="typed-tail"></span><span id="type-cursor"></span>
+      <span class="hl-row"><span class="hero-slashes">//&nbsp;</span><span id="typed-text-a"></span></span><span class="hl-row"><span id="typed-text-b"></span></span><br class="hero-br-desktop"><span class="hl-word-wrap"><span id="typed-word"></span></span><span class="hero-word-gap"> </span><span class="hl-tail-wrap"><span id="typed-tail"></span></span><span id="type-cursor"></span>
     </h1>
   </div>
   <div class="layer-near" id="layerNear"></div>
@@ -666,6 +687,16 @@ nav.nav-s1 {
       <div class="logic-step-count"><span id="l1step">01</span>&nbsp;/&nbsp;04</div>
       <h2 class="logic-title"><span id="l1ta">&nbsp;</span><br><span id="l1tb">&nbsp;</span></h2>
       <p class="logic-desc" id="l1desc"></p>
+      <div class="logic-nav">
+        <button class="logic-btn" id="logicPrev" disabled>←</button>
+        <div class="ln-dots" id="lnDots">
+          <span class="ln-dot active"></span>
+          <span class="ln-dot"></span>
+          <span class="ln-dot"></span>
+          <span class="ln-dot"></span>
+        </div>
+        <button class="logic-btn" id="logicNext">→</button>
+      </div>
     </div>
   </div>
 </div>
@@ -724,8 +755,7 @@ nav.nav-s1 {
     <div class="s7-above-fold">
       <p class="eyebrow">// Early Access</p>
       <h2 class="s-headline s-headline--center s-headline--access">Join the traders who refuse<br>to get caught <span class="hl">overnight</span>.</h2>
-      <p class="s7-stat">avg. capital saved &mdash; <span>$4,830 AUD</span> / month per user</p>
-      <div class="founding-bar">
+<div class="founding-bar">
         <span class="founding-label">0 of 50 founding member spots remaining</span>
         <div class="founding-track"><div class="founding-fill" id="foundingFill"></div></div>
       </div>
@@ -1044,7 +1074,7 @@ window.addEventListener('orientationchange',function(){setTimeout(setVh,250);});
 (function(){
   var beforeA='The Safest Way to ';
   var beforeB='Protect Your ';
-  var after=' Overnight';
+  var after='Overnight';
   var words=['Capital','Positions','Investments','Trades'];
   var elBeforeA=document.getElementById('typed-text-a');
   var elBeforeB=document.getElementById('typed-text-b');
@@ -1210,8 +1240,7 @@ var LOGIC_DATA=[
   {px:0.59,py:0.76,num:'04',a:'You',               b:'Wake Up.',            desc:'Full intelligence brief waiting. What moved, what Nocturn did — and what it held, and exactly why.'},
 ];
 
-var logicSub={3:0};
-var LOGIC_MAX={3:4};
+var logicCurrentStep=0;
 var logicCtrl={};
 
 function createLogicController(canvasId){
@@ -1307,6 +1336,43 @@ function createLogicController(canvasId){
 
 logicCtrl[3]=createLogicController('lc1');
 
+function updateLogicNav(){
+  var prev=document.getElementById('logicPrev');
+  var next=document.getElementById('logicNext');
+  var dots=document.querySelectorAll('.ln-dot');
+  if(prev)prev.disabled=logicCurrentStep===0;
+  if(next)next.disabled=logicCurrentStep===LOGIC_DATA.length-1;
+  dots.forEach(function(d,i){d.classList.toggle('active',i===logicCurrentStep);});
+}
+
+function logicNavStep(dir){
+  var next=logicCurrentStep+dir;
+  if(next<0||next>=LOGIC_DATA.length)return;
+  logicCurrentStep=next;
+  showLogicStep(logicCurrentStep);
+  updateLogicNav();
+}
+window.logicNavStep=logicNavStep;
+
+/* Wire up the buttons */
+(function(){
+  var prev=document.getElementById('logicPrev');
+  var next=document.getElementById('logicNext');
+  if(prev)prev.addEventListener('click',function(){logicNavStep(-1);});
+  if(next)next.addEventListener('click',function(){logicNavStep(1);});
+
+  /* Horizontal swipe on the logic text area */
+  var lt=document.querySelector('.logic-text');
+  if(lt){
+    var swipeX=0;
+    lt.addEventListener('touchstart',function(e){swipeX=e.touches[0].clientX;},{passive:true});
+    lt.addEventListener('touchend',function(e){
+      var dx=swipeX-e.changedTouches[0].clientX;
+      if(Math.abs(dx)>44)logicNavStep(dx>0?1:-1);
+    },{passive:true});
+  }
+})();
+
 function fastTypeEl(el,text,spd,onDone){
   el.textContent='';
   var i=0;
@@ -1338,7 +1404,7 @@ function showLogicStep(si){
 }
 
 function resetLogicSection(){
-  logicSub[3]=0;
+  logicCurrentStep=0;
   if(logicCtrl[3])logicCtrl[3].reset();
   var taEl=document.getElementById('l1ta');
   var tbEl=document.getElementById('l1tb');
@@ -1346,6 +1412,7 @@ function resetLogicSection(){
   if(taEl)taEl.textContent=' ';
   if(tbEl)tbEl.textContent=' ';
   if(descEl){descEl.classList.remove('show');descEl.textContent='';}
+  updateLogicNav();
 }
 
 /* ══════════════════════════════════════════
@@ -1487,25 +1554,6 @@ function updateTint(idx){
     if(isAnimating)return;
 
     /* Sub-scroll within logic section (index 3) */
-    if(LOGIC_MAX[current]!==undefined){
-      var now=Date.now();
-      if(now-lastTime<DEBOUNCE)return;
-      if(dir>0&&logicSub[current]<LOGIC_MAX[current]-1){
-        isAnimating=true; lastTime=now;
-        logicSub[current]++;
-        showLogicStep(logicSub[current]);
-        setTimeout(function(){isAnimating=false;},DEBOUNCE);
-        return;
-      }
-      if(dir<0&&logicSub[current]>0){
-        isAnimating=true; lastTime=now;
-        logicSub[current]--;
-        showLogicStep(logicSub[current]);
-        setTimeout(function(){isAnimating=false;},DEBOUNCE);
-        return;
-      }
-    }
-
     if(nextIdx<0||nextIdx>=TOTAL)return;
     var now=Date.now();
     if(now-lastTime<DEBOUNCE)return;
