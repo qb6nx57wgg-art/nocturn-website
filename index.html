@@ -155,6 +155,17 @@ nav.nav-s1 {
   opacity:1;
   animation:scrollFloat 2.6s ease-in-out infinite;
 }
+@media (max-width:768px) {
+  #global-scroll-hint {
+    font-size:9px; letter-spacing:0.14em;
+    background:rgba(9,9,11,0.6);
+    border:1px solid rgba(255,255,255,0.2);
+    border-radius:100px;
+    padding:11px 22px;
+    color:rgba(240,240,240,0.82);
+    cursor:pointer; pointer-events:auto;
+  }
+}
 
 /* ══════════════════════════════════════════
    SCENE SECTIONS
@@ -195,6 +206,9 @@ nav.nav-s1 {
 }
 #type-cursor.active { opacity:1; }
 @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+/* Mobile-only hero line breaks */
+.hero-br-1 { display:none; }
 
 
 /* ── SHARED SECTION CONTENT ── */
@@ -477,34 +491,38 @@ nav.nav-s1 {
     padding-left:max(24px,env(safe-area-inset-left,24px));
     padding-right:max(24px,env(safe-area-inset-right,24px));
   }
-  .hero-line { font-size:clamp(52px,14vw,78px); font-weight:500; max-width:95vw; line-height:1.04; }
+  /* Hero: 4 fixed rows on mobile */
+  .hero-br-1 { display:inline; }
+  #typed-word { display:block; }
+  #typed-tail { display:block; }
+  .hero-line { font-size:clamp(52px,14vw,78px); font-weight:500; color:#ffffff; max-width:95vw; line-height:1.06; }
   .hero-slashes { font-size:clamp(13px,3.5vw,20px); }
   .early-cta { margin-top:36px; font-size:10px; }
 
   .s-content { padding:0 24px; }
   .s-problem,.s-how1 { justify-content:center; }
-  .s-headline { font-size:clamp(30px,8vw,52px); margin-bottom:28px; }
-  .s-headline--access { font-size:clamp(24px,6.5vw,40px); }
+  .s-headline { font-size:clamp(34px,9.5vw,58px); font-weight:500; color:#ffffff; margin-bottom:28px; }
+  .s-headline--access { font-size:clamp(28px,7.5vw,44px); }
   .eyebrow { font-size:11px; margin-bottom:18px; }
   .s-sub { font-size:11px; margin-bottom:32px; }
 
   .prob-stats { grid-template-columns:1fr; border-top:none; }
   .prob-stat { padding:18px 0; border-right:none; border-top:1px solid rgba(255,255,255,0.06); }
   .prob-stat:last-child,.prob-stat:nth-child(2) { padding-left:0; }
-  .ps-value { font-size:clamp(52px,14vw,80px); }
+  .ps-value { font-size:clamp(52px,14vw,80px); font-weight:500; color:#ffffff; }
   .ps-label { font-size:11px; }
 
   .rule3-grid { grid-template-columns:1fr; gap:0; }
   .rule3-item { padding:18px 0; border-right:none; border-top:1px solid rgba(255,255,255,0.07); }
   .rule3-item:nth-child(n+2) { padding-left:0; }
-  .rule3-title { font-size:clamp(22px,5.5vw,32px); }
+  .rule3-title { font-size:clamp(22px,5.5vw,32px); font-weight:500; color:#ffffff; }
   .rule3-desc { font-size:11px; }
 
   /* Logic: stack viz above text */
   .logic-layout { flex-direction:column; }
   .logic-viz { flex:0 0 42%; }
   .logic-text { flex:1; padding:20px 24px 24px; justify-content:flex-start; padding-top:24px; }
-  .logic-title { font-size:clamp(28px,7.5vw,48px); min-height:unset; margin-bottom:14px; }
+  .logic-title { font-size:clamp(28px,7.5vw,48px); font-weight:500; color:#ffffff; min-height:unset; margin-bottom:14px; }
   .logic-desc { font-size:12px; max-width:100%; }
 
   .broker-drum-wrap { height:240px; }
@@ -537,12 +555,12 @@ nav.nav-s1 {
 }
 
 @media (max-width:430px) {
-  .hero-line { font-size:56px; }
+  .hero-line { font-size:54px; }
 }
 
 @media (max-width:390px) {
-  .hero-line { font-size:52px; }
-  .s-headline { font-size:clamp(26px,7.5vw,38px); }
+  .hero-line { font-size:50px; }
+  .s-headline { font-size:clamp(28px,8.5vw,40px); font-weight:500; color:#ffffff; }
   .s-hero {
     padding-bottom:max(18vh,calc(env(safe-area-inset-bottom,0px) + 18vh));
   }
@@ -582,7 +600,7 @@ nav.nav-s1 {
 <div class="scene-section s-hero active" data-index="0">
   <div class="layer-mid" id="layerMid">
     <h1 class="hero-line">
-      <span class="hero-slashes">//&nbsp;</span><span id="typed-text"></span><br><span id="typed-word"></span><span id="typed-tail"></span><span id="type-cursor"></span>
+      <span class="hero-slashes">//&nbsp;</span><span id="typed-text-a"></span><br class="hero-br-1"><span id="typed-text-b"></span><br><span id="typed-word"></span><span id="typed-tail"></span><span id="type-cursor"></span>
     </h1>
   </div>
   <div class="layer-near" id="layerNear"></div>
@@ -1024,10 +1042,12 @@ window.addEventListener('orientationchange',function(){setTimeout(setVh,250);});
    TYPEWRITER + CYCLING WORD
 ══════════════════════════════════════════ */
 (function(){
-  var before='The Safest Way to Protect Your ';
+  var beforeA='The Safest Way to ';
+  var beforeB='Protect Your ';
   var after=' Overnight';
   var words=['Capital','Positions','Investments','Trades'];
-  var elBefore=document.getElementById('typed-text');
+  var elBeforeA=document.getElementById('typed-text-a');
+  var elBeforeB=document.getElementById('typed-text-b');
   var elWord=document.getElementById('typed-word');
   var elAfter=document.getElementById('typed-tail');
   var cursor=document.getElementById('type-cursor');
@@ -1036,10 +1056,19 @@ window.addEventListener('orientationchange',function(){setTimeout(setVh,250);});
   function moveCursor(el){el.insertAdjacentElement('afterend',cursor);cursor.classList.add('active');}
   var i=0;
   setTimeout(function typeBefore(){
-    if(i===0)moveCursor(elBefore);
-    elBefore.textContent=before.slice(0,++i);
-    if(i<before.length)setTimeout(typeBefore,i===1?80:TYPE_SPD+Math.random()*16);
-    else typeWord(0,true);
+    if(i===0)moveCursor(elBeforeA);
+    elBeforeA.textContent=beforeA.slice(0,++i);
+    if(i<beforeA.length){
+      setTimeout(typeBefore,i===1?80:TYPE_SPD+Math.random()*16);
+    } else {
+      var j=0;
+      moveCursor(elBeforeB);
+      (function typeB(){
+        elBeforeB.textContent=beforeB.slice(0,++j);
+        if(j<beforeB.length)setTimeout(typeB,TYPE_SPD+Math.random()*16);
+        else typeWord(0,true);
+      })();
+    }
   },900);
 
   function typeWord(idx,first){
@@ -1362,15 +1391,22 @@ function updateTint(idx){
   function pad(n){return n<10?'0'+n:''+n;}
 
   var gsh=document.getElementById('global-scroll-hint');
+  var isMobileHint=window.innerWidth<=768;
+
+  if(gsh){
+    gsh.addEventListener('click',function(){
+      if(isMobileHint)jumpTo(6);
+    });
+  }
 
   function updateScrollHint(idx){
     if(!gsh)return;
-    /* Hide on last section (S7) */
     if(idx>=6){ gsh.classList.remove('show'); return; }
-    /* Logic section (3) has its own internal hint — hide global while active,
-       but show it initially before the first step's hint appears */
-    if(idx===3){ gsh.textContent='scroll to advance ↓'; gsh.classList.add('show'); return; }
-    gsh.textContent=idx===5?'scroll to learn more ↓':'scroll to advance ↓';
+    if(isMobileHint){
+      gsh.textContent='Get Early Access ↓';
+    } else {
+      gsh.textContent=idx===5?'scroll to learn more ↓':'scroll to advance ↓';
+    }
     gsh.classList.add('show');
   }
 
