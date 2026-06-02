@@ -36,7 +36,7 @@ body {
     linear-gradient(to bottom, rgba(9,9,11,0.4) 0%, transparent 18%, transparent 75%, rgba(9,9,11,0.62) 100%);
 }
 
-/* ── PER-SECTION AMBIENT TINT (separate layer, JS cross-fades) ── */
+/* ── PER-SECTION AMBIENT TINT ── */
 #stint {
   position:fixed; inset:0; z-index:3; pointer-events:none;
   opacity:0; transition:opacity 0.55s ease;
@@ -50,9 +50,7 @@ nav {
   padding-left:max(52px,env(safe-area-inset-left,52px));
   padding-right:max(52px,env(safe-area-inset-right,52px));
   display:flex; align-items:center; will-change:transform;
-  opacity:1; transition:opacity 0.5s cubic-bezier(0.16,1,0.3,1);
 }
-nav.nav-hidden { opacity:0; pointer-events:none; }
 .logo {
   font-family:'Syne',sans-serif; font-weight:800; font-size:24px;
   letter-spacing:0.18em; text-transform:uppercase; color:#ffffff;
@@ -61,31 +59,52 @@ nav.nav-hidden { opacity:0; pointer-events:none; }
 .logo:hover { opacity:0.75; }
 .logo .ls { color:rgba(255,255,255,0.32); }
 
+/* ── NAV EARLY ACCESS BUTTON ── */
+.nav-ea {
+  margin-left:auto; display:inline-flex; align-items:center;
+  font-family:'Geist Mono',monospace; font-size:10px; font-weight:700;
+  letter-spacing:0.16em; text-transform:uppercase; color:#ffffff;
+  background:transparent; border:1px solid #e06c2a;
+  border-radius:100px; padding:9px 20px;
+  cursor:pointer; transition:background 0.28s ease, color 0.28s ease;
+  white-space:nowrap;
+}
+.nav-ea:hover { background:rgba(224,108,42,0.12); }
+
 /* ── PROGRESS TRACK ── */
 #prog-track {
   position:fixed; right:28px; top:50%; transform:translateY(-50%);
   z-index:25; display:flex; flex-direction:column;
   justify-content:space-between; align-items:center;
-  height:168px; width:12px;
+  height:168px; width:20px; pointer-events:auto;
 }
 #prog-track::before {
   content:''; position:absolute; left:50%; top:0; bottom:0;
   width:1px; background:rgba(255,255,255,0.07); transform:translateX(-50%);
 }
 .prog-dot {
-  width:4px; height:4px; border-radius:50%; background:rgba(255,255,255,0.18);
+  /* Visible dot */
+  width:4px; height:4px; border-radius:50%; background:rgba(255,255,255,0.22);
   position:relative; z-index:1; transition:all 0.45s cubic-bezier(0.16,1,0.3,1);
   flex-shrink:0; cursor:pointer; pointer-events:auto;
 }
+/* Enlarged invisible hit area */
+.prog-dot::before {
+  content:''; position:absolute;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  width:24px; height:24px; border-radius:50%;
+}
+.prog-dot:hover { background:rgba(255,255,255,0.55); transform:scale(1.5); }
 .prog-dot.active {
   width:6px; height:6px; background:#e06c2a;
   box-shadow:0 0 8px rgba(224,108,42,0.55),0 0 18px rgba(224,108,42,0.2);
 }
+.prog-dot.active:hover { transform:scale(1.2); }
 
 /* ── SECTION COUNTER ── */
 #sec-counter {
   position:fixed; bottom:max(32px,env(safe-area-inset-bottom,32px));
-  left:50%; transform:translateX(-50%); z-index:25;
+  right:52px; z-index:25;
   font-family:'Geist Mono',monospace; font-size:10px;
   letter-spacing:0.28em; color:rgba(232,232,232,0.18);
 }
@@ -101,6 +120,32 @@ nav.nav-hidden { opacity:0; pointer-events:none; }
 
 /* ── ORANGE HIGHLIGHT ── */
 .hl { color:#e06c2a; font-style:inherit; }
+/* ── SUBTLE EMPHASIS (brighter white, not orange) ── */
+.s-em { color:rgba(232,232,232,0.72); font-weight:400; font-style:inherit; }
+
+/* ── FLOATING SCROLL HINT ── */
+@keyframes scrollFloat {
+  0%,100%{ transform:translateY(0) translateX(-50%); opacity:0.28; }
+  50%{ transform:translateY(-6px) translateX(-50%); opacity:0.55; }
+}
+@keyframes scrollFloatInline {
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-5px); }
+}
+/* Global bottom-center scroll hint (all sections except S7) */
+#global-scroll-hint {
+  position:fixed; bottom:max(26px,env(safe-area-inset-bottom,26px));
+  left:50%; z-index:24;
+  font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:0.24em;
+  text-transform:uppercase; color:rgba(232,232,232,0.3);
+  opacity:0; pointer-events:none; white-space:nowrap;
+  transform:translateX(-50%);
+  transition:opacity 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+#global-scroll-hint.show {
+  opacity:1;
+  animation:scrollFloat 2.6s ease-in-out infinite;
+}
 
 /* ══════════════════════════════════════════
    SCENE SECTIONS
@@ -115,8 +160,8 @@ nav.nav-hidden { opacity:0; pointer-events:none; }
 /* ── S1: HERO ── */
 .s-hero {
   align-items:flex-start; justify-content:flex-end;
-  padding:0 52px 10vh;
-  padding-bottom:max(10vh,calc(env(safe-area-inset-bottom,0px) + 10vh));
+  padding:0 52px 20vh;
+  padding-bottom:max(20vh,calc(env(safe-area-inset-bottom,0px) + 20vh));
   padding-left:max(52px,env(safe-area-inset-left,52px));
   padding-right:max(52px,env(safe-area-inset-right,52px));
 }
@@ -142,31 +187,6 @@ nav.nav-hidden { opacity:0; pointer-events:none; }
 #type-cursor.active { opacity:1; }
 @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
 
-/* ── EARLY ACCESS CTA (hero) ── */
-.early-cta {
-  display:inline-flex; align-items:center; gap:14px;
-  margin-top:52px; font-family:'Geist Mono',monospace; font-size:11px;
-  letter-spacing:0.18em; text-transform:uppercase;
-  color:rgba(232,232,232,0.55); cursor:pointer; background:transparent; border:none;
-  opacity:0; transition:color 0.35s ease;
-}
-.early-cta.show { animation:fadeUp 0.9s 0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
-.early-cta:hover { color:rgba(232,232,232,0.92); }
-.cta-dot {
-  width:7px; height:7px; border-radius:50%; background:#e06c2a; flex-shrink:0;
-  box-shadow:0 0 10px rgba(224,108,42,0.7);
-  animation:ctapulse 2.2s ease-in-out infinite;
-}
-@keyframes ctapulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.5);opacity:0.65;} }
-.cta-arrow {
-  width:26px; height:26px; border-radius:50%;
-  border:1px solid rgba(232,232,232,0.18);
-  display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0;
-  transition:border-color 0.35s, transform 0.35s ease;
-}
-.early-cta:hover .cta-arrow { border-color:rgba(232,232,232,0.45); transform:translate(2px,-2px); }
-
-@keyframes fadeUp { from{opacity:0;transform:translateY(14px);} to{opacity:1;transform:translateY(0);} }
 
 /* ── SHARED SECTION CONTENT ── */
 .s-content { width:100%; max-width:1100px; padding:0 52px; }
@@ -211,50 +231,36 @@ nav.nav-hidden { opacity:0; pointer-events:none; }
   letter-spacing:0.12em; color:rgba(232,232,232,0.3); line-height:1.8;
 }
 
-/* ── S3: THE SOLUTION ── */
-.pillar-row {
-  display:grid; grid-template-columns:repeat(3,1fr); gap:18px;
-  width:100%; max-width:940px;
+/* ── S3: SOLUTION + RULE OF 3 ── */
+.rule3-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+  width:100%; max-width:820px;
+  border-top:1px solid rgba(255,255,255,0.07);
+  margin-top:8px;
 }
-.pillar {
-  position:relative; overflow:hidden; display:flex; flex-direction:column; gap:14px;
-  padding:30px 26px 26px;
-  background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.07);
-  border-radius:18px; cursor:default;
-  opacity:0; transform:translateY(28px);
-  transition:opacity 0.7s cubic-bezier(0.16,1,0.3,1),
-             transform 0.7s cubic-bezier(0.16,1,0.3,1),
-             border-color 0.4s ease, background 0.4s ease;
+.rule3-item {
+  display:flex; flex-direction:column; gap:14px;
+  padding:28px 28px 28px 0;
+  border-right:1px solid rgba(255,255,255,0.07);
+  opacity:0; transform:translateY(20px);
+  transition:opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+  text-align:left;
 }
-.pillar.show { opacity:1; transform:translateY(0); }
-.pillar::after {
-  content:''; position:absolute; top:0; left:0; right:0; height:1px;
-  background:linear-gradient(90deg, transparent, #e06c2a 40%, transparent);
-  transform:scaleX(0); transform-origin:left;
-  transition:transform 0.55s cubic-bezier(0.16,1,0.3,1);
+.rule3-item:last-child { border-right:none; }
+.rule3-item:nth-child(n+2) { padding-left:28px; padding-right:0; }
+.rule3-item:nth-child(2) { padding-left:28px; }
+.rule3-item.show { opacity:1; transform:translateY(0); }
+.rule3-title {
+  font-family:'Cormorant Garant',serif; font-style:italic; font-weight:400;
+  font-size:clamp(18px,2vw,26px); letter-spacing:-0.015em; color:#f0f0f0; line-height:1.1;
 }
-.pillar:hover::after,.pillar.tapped::after { transform:scaleX(1); }
-.pillar:hover,.pillar.tapped {
-  border-color:rgba(224,108,42,0.22); background:rgba(224,108,42,0.035);
+.rule3-desc {
+  font-family:'Geist Mono',monospace; font-size:10px; font-weight:300;
+  color:rgba(232,232,232,0.32); line-height:1.9; letter-spacing:0.05em;
 }
-.pillar.show:hover,.pillar.show.tapped { transform:translateY(-4px); }
-.pillar-num { font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:0.22em; color:rgba(224,108,42,0.5); transition:color 0.35s; }
-.pillar:hover .pillar-num,.pillar.tapped .pillar-num { color:#e06c2a; }
-.pillar-title { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(240,240,240,0.88); }
-.pillar-desc { font-family:'Geist Mono',monospace; font-size:10px; font-weight:300; color:rgba(232,232,232,0.32); line-height:1.9; letter-spacing:0.05em; transition:color 0.35s; }
-.pillar:hover .pillar-desc,.pillar.tapped .pillar-desc { color:rgba(232,232,232,0.52); }
-.pillar-bg-sym {
-  position:absolute; right:14px; bottom:10px; font-size:52px;
-  color:rgba(224,108,42,0.04); pointer-events:none; user-select:none; line-height:1;
-  transition:color 0.4s, transform 0.5s cubic-bezier(0.16,1,0.3,1);
-}
-.pillar:hover .pillar-bg-sym,.pillar.tapped .pillar-bg-sym { color:rgba(224,108,42,0.09); transform:scale(1.12) rotate(-6deg); }
 
-/* ══════════════════════════════════════════
-   S4 / S5: LOGIC SECTIONS — NODE CANVAS
-══════════════════════════════════════════ */
-.s-how1,.s-how2 { padding:0; }
-
+/* ── S4: LOGIC ── */
+.s-how1 { padding:0; }
 .logic-layout {
   position:absolute; inset:0; display:flex;
 }
@@ -284,12 +290,28 @@ nav.nav-hidden { opacity:0; pointer-events:none; }
   max-width:360px; opacity:0; transition:opacity 0.75s cubic-bezier(0.16,1,0.3,1);
 }
 .logic-desc.show { opacity:1; }
-.logic-scroll-hint {
-  font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:0.2em;
-  color:rgba(224,108,42,0.4); margin-top:22px; text-transform:uppercase;
-  opacity:0; transition:opacity 0.6s ease;
+
+/* ── S5: BROKERS ── */
+.s-brokers { flex-direction:column; }
+.broker-section-content {
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  width:100%;
 }
-.logic-scroll-hint.show { opacity:1; }
+.broker-drum-wrap {
+  position:relative; width:360px; max-width:90vw;
+  height:280px; overflow:hidden;
+  -webkit-mask-image:linear-gradient(to bottom, transparent 0%, black 22%, black 78%, transparent 100%);
+  mask-image:linear-gradient(to bottom, transparent 0%, black 22%, black 78%, transparent 100%);
+}
+#brokerDrum { width:100%; height:100%; overflow:hidden; }
+#brokerInner { display:flex; flex-direction:column; align-items:center; will-change:transform; }
+.broker-item {
+  height:54px; width:100%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Cormorant Garant',serif; font-style:italic; font-weight:300;
+  color:#f0f0f0; white-space:nowrap; letter-spacing:-0.01em;
+  cursor:default; user-select:none;
+}
 
 /* ── S6: MARKET GAP ── */
 .gap-scroll { width:100%; max-width:820px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
@@ -324,6 +346,35 @@ nav.nav-hidden { opacity:0; pointer-events:none; }
 .gap-row-label:last-of-type,.gap-cell:nth-last-child(-n+5) { border-bottom:none; }
 
 /* ── S7: EARLY ACCESS ── */
+.s-access {
+  /* Override: align to top so content can scroll from top */
+  justify-content:flex-start;
+}
+.s-access .s-content {
+  overflow-y:auto; height:100%;
+  -webkit-overflow-scrolling:touch;
+  padding-top:0; padding-bottom:0;
+  scrollbar-width:none; display:block;
+}
+.s-access .s-content::-webkit-scrollbar { display:none; }
+/* Above-fold: fills full viewport, centers the signup content */
+.s7-above-fold {
+  min-height:calc(var(--vh,1vh)*100);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  text-align:center;
+  padding:88px 52px 48px;
+  padding-top:max(88px,calc(env(safe-area-inset-top,0px) + 88px));
+  padding-left:max(52px,env(safe-area-inset-left,52px));
+  padding-right:max(52px,env(safe-area-inset-right,52px));
+}
+/* Below-fold: footer, only appears on scroll */
+.s7-footer {
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  padding:0 52px max(48px,calc(env(safe-area-inset-bottom,0px) + 48px));
+  padding-left:max(52px,env(safe-area-inset-left,52px));
+  padding-right:max(52px,env(safe-area-inset-right,52px));
+}
 .s-headline--access { font-size:clamp(28px,3.8vw,58px); margin-bottom:32px; }
 .founding-bar { width:100%; max-width:480px; margin-bottom:36px; }
 .founding-label {
@@ -368,11 +419,36 @@ nav.nav-hidden { opacity:0; pointer-events:none; }
 .email-btn:hover .btn-icon { transform:translate(1px,-1px); }
 .form-fine {
   font-family:'Geist Mono',monospace; font-size:10px; font-weight:300;
-  letter-spacing:0.1em; color:rgba(232,232,232,0.2); margin-bottom:28px;
+  letter-spacing:0.1em; color:rgba(232,232,232,0.2); margin-bottom:24px;
 }
-.trust-row { display:flex; gap:28px; flex-wrap:wrap; justify-content:center; }
+.trust-row { display:flex; gap:28px; flex-wrap:wrap; justify-content:center; margin-bottom:44px; }
 .trust-item { font-family:'Geist Mono',monospace; font-size:10px; font-weight:300; letter-spacing:0.1em; color:rgba(232,232,232,0.22); }
 .form-success { font-family:'Geist Mono',monospace; font-size:12px; letter-spacing:0.15em; color:rgba(224,108,42,0.85); display:none; margin-bottom:16px; }
+
+/* ── FOOTER (inside S7) ── */
+.footer-divider {
+  width:100%; max-width:480px; height:1px;
+  background:rgba(255,255,255,0.06); margin-bottom:36px;
+}
+.faq-grid {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:24px 36px;
+  width:100%; max-width:680px; margin-bottom:36px; text-align:left;
+}
+.faq-item {}
+.faq-q {
+  font-family:'Geist Mono',monospace; font-size:10px; font-weight:400;
+  letter-spacing:0.12em; color:rgba(232,232,232,0.55); margin-bottom:8px;
+  text-transform:uppercase;
+}
+.faq-a {
+  font-family:'Geist Mono',monospace; font-size:10px; font-weight:300;
+  letter-spacing:0.06em; color:rgba(232,232,232,0.25); line-height:1.85;
+}
+.footer-est {
+  font-family:'Geist Mono',monospace; font-size:10px; font-weight:300;
+  letter-spacing:0.22em; color:rgba(232,232,232,0.15); text-transform:uppercase;
+  padding-bottom:8px;
+}
 
 /* ══════════════════════════════════════════
    MOBILE
@@ -380,22 +456,23 @@ nav.nav-hidden { opacity:0; pointer-events:none; }
 @media (max-width:768px) {
   nav { padding:24px 24px; padding-top:max(24px,env(safe-area-inset-top,24px)); }
   .logo { font-size:18px; }
+  .nav-ea { font-size:9px; padding:7px 14px 7px 10px; }
   #prog-track { right:12px; height:126px; }
   #key-hint { display:none; }
-  #sec-counter { bottom:max(18px,env(safe-area-inset-bottom,18px)); }
+  #sec-counter { bottom:max(18px,env(safe-area-inset-bottom,18px)); right:20px; }
 
   .s-hero {
-    padding:0 24px 9vh;
-    padding-bottom:max(9vh,calc(env(safe-area-inset-bottom,0px) + 9vh));
+    padding:0 24px 22vh;
+    padding-bottom:max(22vh,calc(env(safe-area-inset-bottom,0px) + 22vh));
     padding-left:max(24px,env(safe-area-inset-left,24px));
     padding-right:max(24px,env(safe-area-inset-right,24px));
   }
-  .hero-line { font-size:clamp(34px,9.5vw,58px); max-width:95vw; line-height:1.06; }
-  .hero-slashes { font-size:clamp(13px,3.8vw,20px); }
-  .early-cta { margin-top:40px; font-size:10px; }
+  .hero-line { font-size:clamp(44px,12vw,72px); max-width:95vw; line-height:1.04; }
+  .hero-slashes { font-size:clamp(14px,4vw,22px); }
+  .early-cta { margin-top:36px; font-size:10px; }
 
   .s-content { padding:0 24px; }
-  .s-problem,.s-how1,.s-how2 { justify-content:center; }
+  .s-problem,.s-how1 { justify-content:center; }
   .s-headline { font-size:clamp(28px,7.5vw,48px); margin-bottom:28px; }
   .s-headline--access { font-size:clamp(22px,6vw,36px); }
   .eyebrow { font-size:10px; margin-bottom:18px; }
@@ -406,7 +483,9 @@ nav.nav-hidden { opacity:0; pointer-events:none; }
   .prob-stat:last-child,.prob-stat:nth-child(2) { padding-left:0; }
   .ps-value { font-size:clamp(44px,13vw,72px); }
 
-  .pillar-row { grid-template-columns:1fr; gap:12px; max-width:100%; }
+  .rule3-grid { grid-template-columns:1fr; gap:0; }
+  .rule3-item { padding:18px 0; border-right:none; border-top:1px solid rgba(255,255,255,0.07); }
+  .rule3-item:nth-child(n+2) { padding-left:0; }
 
   /* Logic: stack viz above text */
   .logic-layout { flex-direction:column; }
@@ -415,16 +494,33 @@ nav.nav-hidden { opacity:0; pointer-events:none; }
   .logic-title { font-size:clamp(26px,7vw,44px); min-height:unset; margin-bottom:14px; }
   .logic-desc { font-size:11px; max-width:100%; }
 
-  .gap-grid { min-width:540px; }
+  .broker-drum-wrap { height:220px; }
+
+  /* S6 market gap — compact mobile table */
+  .s-gap .s-headline { font-size:clamp(24px,7vw,42px); margin-bottom:18px; }
+  .s-gap .eyebrow { margin-bottom:14px; }
+  .gap-scroll { padding-bottom:4px; }
+  .gap-grid { min-width:440px; border-radius:10px; }
+  .gap-head { padding:10px 10px; font-size:8px; letter-spacing:0.12em; }
+  .gap-row-label { padding:10px 10px; font-size:9px; }
+  .gap-cell { padding:10px 10px; font-size:11px; }
+  .gap-cell--partial { font-size:9px; }
 
   .email-form { flex-direction:column; }
   .trust-row { flex-direction:column; align-items:center; gap:10px; }
   .s7-stat { font-size:clamp(18px,4.5vw,26px); }
+
+  .faq-grid { grid-template-columns:1fr; gap:20px; }
+  .s7-above-fold { padding:72px 24px 40px; padding-top:max(72px,calc(env(safe-area-inset-top,0px) + 72px)); }
+  .s7-footer { padding:0 24px max(36px,calc(env(safe-area-inset-bottom,0px) + 36px)); }
 }
 
 @media (max-width:390px) {
-  .hero-line { font-size:clamp(28px,8vw,40px); }
+  .hero-line { font-size:clamp(38px,10vw,56px); }
   .s-headline { font-size:clamp(24px,7vw,36px); }
+  .s-hero {
+    padding-bottom:max(18vh,calc(env(safe-area-inset-bottom,0px) + 18vh));
+  }
 }
 </style>
 </head>
@@ -435,9 +531,10 @@ nav.nav-hidden { opacity:0; pointer-events:none; }
 <div id="vignette"></div>
 <div id="stint"></div>
 
-<!-- ── NAV (hidden on S2–S7) ── -->
+<!-- ── NAV (always visible) ── -->
 <nav id="navEl">
   <a href="#" class="logo"><span class="ls">/</span>NOCTURN</a>
+  <button class="nav-ea" onclick="jumpToAccess()">Early Access</button>
 </nav>
 
 <!-- ── PROGRESS DOTS ── -->
@@ -452,6 +549,7 @@ nav.nav-hidden { opacity:0; pointer-events:none; }
 </div>
 <div id="sec-counter"><span id="sec-cur">01</span>&nbsp;/&nbsp;07</div>
 <div id="key-hint">↑ ↓ scroll or arrow keys to navigate</div>
+<div id="global-scroll-hint">scroll to advance ↓</div>
 
 <!-- ══════════════════════════════════════════
      S1 — HERO
@@ -462,13 +560,7 @@ nav.nav-hidden { opacity:0; pointer-events:none; }
       <span class="hero-slashes">//&nbsp;</span><span id="typed-text"></span><br><span id="typed-word"></span><span id="typed-tail"></span><span id="type-cursor"></span>
     </h1>
   </div>
-  <div class="layer-near" id="layerNear">
-    <button class="early-cta" id="earlyCta" onclick="jumpToAccess()">
-      <span class="cta-dot"></span>
-      <span>Request Early Access</span>
-      <span class="cta-arrow">↗</span>
-    </button>
-  </div>
+  <div class="layer-near" id="layerNear"></div>
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -496,64 +588,57 @@ nav.nav-hidden { opacity:0; pointer-events:none; }
 </div>
 
 <!-- ══════════════════════════════════════════
-     S3 — THE SOLUTION
+     S3 — SOLUTION + RULE OF 3
 ══════════════════════════════════════════ -->
 <div class="scene-section s-solution" data-index="2">
   <div class="s-content s-content--center">
     <p class="eyebrow">// The Solution</p>
     <h2 class="s-headline s-headline--center">Nocturn <span class="hl">watches</span><br>while you sleep.</h2>
-    <p class="s-sub">The first platform to combine instrument-aware AI classification,<br>real-time news intelligence, and automated execution.<br>Your positions protected. Every night. Without intervention.</p>
-    <div class="pillar-row">
-      <div class="pillar" id="p0">
-        <span class="pillar-num">01</span>
-        <span class="pillar-title">AI Classification</span>
-        <span class="pillar-desc">Market-aware and position-specific. Nocturn knows that a ceasefire headline doesn't move gold the same way twice — and it knows your instrument before anything breaks.</span>
-        <span class="pillar-bg-sym">◈</span>
+    <p class="s-sub">The first platform to combine <span class="s-em">instrument-aware AI classification</span>,<br><span class="s-em">real-time news intelligence</span>, and <span class="hl">automated broker execution</span>.</p>
+    <div class="rule3-grid">
+      <div class="rule3-item" id="r0">
+        <span class="rule3-title">Your Capital.</span>
+        <span class="rule3-desc">Positions closed on your terms, not the market's. Nocturn acts only when risk is confirmed — never on noise alone.</span>
       </div>
-      <div class="pillar" id="p1">
-        <span class="pillar-num">02</span>
-        <span class="pillar-title">News Intelligence</span>
-        <span class="pillar-desc">100+ live sources. Every wire, every breaking X post, every unscheduled event feed — scored for market relevance in real time. Nothing slips through overnight.</span>
-        <span class="pillar-bg-sym">◎</span>
+      <div class="rule3-item" id="r1">
+        <span class="rule3-title">Your Rules.</span>
+        <span class="rule3-desc">Every preference preserved. Risk tolerance, stop levels, and execution conditions set once. Nocturn adapts to you.</span>
       </div>
-      <div class="pillar" id="p2">
-        <span class="pillar-num">03</span>
-        <span class="pillar-title">Automated Protection</span>
-        <span class="pillar-desc">Confirmation before execution. Price action must agree with the signal. Connected to 100+ brokers. Zero intervention. Capital preserved while you sleep.</span>
-        <span class="pillar-bg-sym">⬡</span>
+      <div class="rule3-item" id="r2">
+        <span class="rule3-title">Your Protection.</span>
+        <span class="rule3-desc">AI eyes on 100+ sources overnight. Automated execution the moment something material breaks against your position.</span>
       </div>
     </div>
   </div>
 </div>
 
 <!-- ══════════════════════════════════════════
-     S4 — HOW IT WORKS: DETECTION
+     S4 — HOW IT WORKS (4 sub-steps)
 ══════════════════════════════════════════ -->
 <div class="scene-section s-how1" data-index="3">
   <div class="logic-layout">
     <div class="logic-viz"><canvas id="lc1" class="logic-canvas"></canvas></div>
     <div class="logic-text">
-      <p class="eyebrow" style="margin-bottom:12px;">// The Logic — 01 / 02</p>
+      <p class="eyebrow" style="margin-bottom:12px;">// The Logic</p>
       <div class="logic-step-count"><span id="l1step">01</span>&nbsp;/&nbsp;04</div>
       <h2 class="logic-title"><span id="l1ta">&nbsp;</span><br><span id="l1tb">&nbsp;</span></h2>
       <p class="logic-desc" id="l1desc"></p>
-      <div class="logic-scroll-hint" id="l1hint"></div>
     </div>
   </div>
 </div>
 
 <!-- ══════════════════════════════════════════
-     S5 — HOW IT WORKS: EXECUTION
+     S5 — BROKERS
 ══════════════════════════════════════════ -->
-<div class="scene-section s-how2" data-index="4">
-  <div class="logic-layout">
-    <div class="logic-viz"><canvas id="lc2" class="logic-canvas"></canvas></div>
-    <div class="logic-text">
-      <p class="eyebrow" style="margin-bottom:12px;">// The Logic — 02 / 02</p>
-      <div class="logic-step-count"><span id="l2step">05</span>&nbsp;/&nbsp;08</div>
-      <h2 class="logic-title"><span id="l2ta">&nbsp;</span><br><span id="l2tb">&nbsp;</span></h2>
-      <p class="logic-desc" id="l2desc"></p>
-      <div class="logic-scroll-hint" id="l2hint"></div>
+<div class="scene-section s-brokers" data-index="4">
+  <div class="broker-section-content">
+    <p class="eyebrow">// Compatible Brokers</p>
+    <h2 class="s-headline s-headline--center" style="margin-bottom:8px;">Works with your <span class="hl">broker</span>.</h2>
+    <p style="font-family:'Geist Mono',monospace;font-size:11px;font-weight:300;color:rgba(232,232,232,0.28);letter-spacing:0.08em;margin-bottom:32px;">40+ brokers across forex, equities &amp; futures.</p>
+    <div class="broker-drum-wrap">
+      <div id="brokerDrum">
+        <div id="brokerInner"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -588,36 +673,62 @@ nav.nav-hidden { opacity:0; pointer-events:none; }
 </div>
 
 <!-- ══════════════════════════════════════════
-     S7 — EARLY ACCESS
+     S7 — EARLY ACCESS + FOOTER
 ══════════════════════════════════════════ -->
 <div class="scene-section s-access" data-index="6">
   <div class="s-content s-content--center">
-    <p class="eyebrow">// Early Access</p>
-    <h2 class="s-headline s-headline--center s-headline--access">Join the traders who refuse<br>to get caught <span class="hl">overnight</span>.</h2>
-    <p class="s7-stat">avg. capital saved &mdash; <span>$4,830 AUD</span> / month per user</p>
-    <div class="founding-bar">
-      <span class="founding-label">0 of 50 founding member spots remaining</span>
-      <div class="founding-track"><div class="founding-fill" id="foundingFill"></div></div>
+    <!-- Above fold: fills the viewport, naturally centered -->
+    <div class="s7-above-fold">
+      <p class="eyebrow">// Early Access</p>
+      <h2 class="s-headline s-headline--center s-headline--access">Join the traders who refuse<br>to get caught <span class="hl">overnight</span>.</h2>
+      <p class="s7-stat">avg. capital saved &mdash; <span>$4,830 AUD</span> / month per user</p>
+      <div class="founding-bar">
+        <span class="founding-label">0 of 50 founding member spots remaining</span>
+        <div class="founding-track"><div class="founding-fill" id="foundingFill"></div></div>
+      </div>
+      <form class="email-form" id="emailForm" onsubmit="return handleSubmit(event)">
+        <input type="email" class="email-input" id="emailInput" placeholder="your@email.com" autocomplete="email" required>
+        <button type="submit" class="email-btn"><span>Request Access</span><span class="btn-icon">↗</span></button>
+      </form>
+      <div class="form-success" id="formSuccess">↗ You're on the list. We'll be in touch.</div>
+      <p class="form-fine">No payment required. Cancel anytime. Your data is never sold.</p>
+      <div class="trust-row">
+        <span class="trust-item">◦ Secure broker connection</span>
+        <span class="trust-item">◦ No credential storage</span>
+        <span class="trust-item">◦ Australian registered company</span>
+      </div>
     </div>
-    <form class="email-form" id="emailForm" onsubmit="return handleSubmit(event)">
-      <input type="email" class="email-input" id="emailInput" placeholder="your@email.com" autocomplete="email" required>
-      <button type="submit" class="email-btn"><span>Request Access</span><span class="btn-icon">↗</span></button>
-    </form>
-    <div class="form-success" id="formSuccess">↗ You're on the list. We'll be in touch.</div>
-    <p class="form-fine">No payment required. Cancel anytime. Your data is never sold.</p>
-    <div class="trust-row">
-      <span class="trust-item">◦ Secure broker connection</span>
-      <span class="trust-item">◦ No credential storage</span>
-      <span class="trust-item">◦ Australian registered company</span>
+    <!-- Below fold: footer revealed on scroll -->
+    <div class="s7-footer">
+      <div class="footer-divider"></div>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <p class="faq-q">When is Nocturn launching?</p>
+          <p class="faq-a">We're in closed early access. Founding members receive priority activation before public release.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Which brokers are supported?</p>
+          <p class="faq-a">40+ brokers across forex, equities and futures — including IC Markets, Pepperstone, OANDA, and Interactive Brokers.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Is my account secure?</p>
+          <p class="faq-a">Read-only API keys for intelligence. Write-only execution keys for protection. Your credentials are never stored on our servers.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">What does early access cost?</p>
+          <p class="faq-a">Nothing for now. Founding members lock in priority access before public pricing is announced.</p>
+        </div>
+      </div>
+      <p class="footer-est">Est. Sydney, 2026</p>
     </div>
   </div>
 </div>
 
 <script>
 /* ══════════════════════════════════════════
-   GLOBAL SHARED STATE
+   GLOBAL STATE
 ══════════════════════════════════════════ */
-var SCENE_CURRENT = 0; // shared with canvas for camera targets
+var SCENE_CURRENT = 0;
 
 /* ── VIEWPORT HEIGHT ── */
 function setVh(){document.documentElement.style.setProperty('--vh',window.innerHeight*0.01+'px');}
@@ -627,25 +738,24 @@ window.addEventListener('orientationchange',function(){setTimeout(setVh,250);});
 
 /* ══════════════════════════════════════════
    3D NEURAL NETWORK CANVAS
-   Camera targets per section — dramatic 30-60° equivalent shifts
+   + Shooting Stars (S1 only)
+   + Tree Silhouettes (S1 only)
+   + Canvas decorators (ripple S2, orbital S5)
 ══════════════════════════════════════════ */
 (function(){
   var canvas=document.getElementById('bg');
   var ctx=canvas.getContext('2d');
   var W,H,dpr;
 
-  /* Per-section camera base targets */
   var CAM_TARGETS=[
-    {x:0,   y:0,   z:-580}, /* S1 front view */
-    {x:-160,y:-70, z:-500}, /* S2 left-up, closer */
-    {x:140, y:90,  z:-680}, /* S3 right-down, farther */
-    {x:210, y:-110,z:-530}, /* S4 strong right-up */
-    {x:-190,y:100, z:-490}, /* S5 strong left-down */
-    {x:40,  y:-150,z:-720}, /* S6 top-far */
-    {x:-70, y:60,  z:-550}, /* S7 slight left */
+    {x:0,   y:0,   z:-580}, /* S1 */
+    {x:-160,y:-70, z:-500}, /* S2 */
+    {x:140, y:90,  z:-680}, /* S3 */
+    {x:210, y:-110,z:-530}, /* S4 logic */
+    {x:-190,y:100, z:-490}, /* S5 brokers */
+    {x:40,  y:-150,z:-720}, /* S6 gap */
+    {x:-70, y:60,  z:-550}, /* S7 access */
   ];
-
-  /* Camera base — lerps toward target per section */
   var CAM_BASE={x:0,y:0,z:-580};
   var mouseOff={x:0,y:0},targetMouse={x:0,y:0};
 
@@ -665,13 +775,14 @@ window.addEventListener('orientationchange',function(){setTimeout(setVh,250);});
     targetMouse.y=(e.clientY/H-0.5)*35;
   });
 
+  /* ── NEURAL NETWORK NODES ── */
   var NUM=130,RANGE={x:1400,y:1000,z:900},MAX_D=260,FOV=420;
   var nodes=[];
   for(var i=0;i<NUM;i++){
     var hub=Math.random()<0.12;
     nodes.push({
       x:(Math.random()-0.5)*RANGE.x, y:(Math.random()-0.5)*RANGE.y, z:(Math.random()-0.5)*RANGE.z,
-      vx:(Math.random()-0.5)*0.055,  vy:(Math.random()-0.5)*0.045,  vz:(Math.random()-0.5)*0.03,
+      vx:(Math.random()-0.5)*0.055, vy:(Math.random()-0.5)*0.045, vz:(Math.random()-0.5)*0.03,
       r:hub?(1.8+Math.random()*1.2):(0.8+Math.random()*1.2),
       ph:Math.random()*Math.PI*2, ps:0.008+Math.random()*0.014,
       hub:hub, connPh:Math.random()*Math.PI*2, connPs:0.004+Math.random()*0.008,
@@ -684,10 +795,89 @@ window.addEventListener('orientationchange',function(){setTimeout(setVh,250);});
     return{sx:(nx-cx)*sc+W*0.5, sy:(ny-cy)*sc+H*0.5, scale:sc, dz:dz};
   }
 
+  /* ── SHOOTING STARS ── */
+  var shootingStars=[];
+  var lastStarTime=0;
+
+  function maybeSpawnStar(t){
+    if(SCENE_CURRENT!==0)return;
+    if(t-lastStarTime<(2+Math.random()*3))return;
+    lastStarTime=t;
+    var angle=-Math.PI/6-Math.random()*Math.PI/6;
+    var spd=280+Math.random()*180;
+    shootingStars.push({
+      x:Math.random()*W,y:Math.random()*H*0.55,
+      vx:Math.cos(angle)*spd, vy:Math.sin(angle)*spd,
+      len:80+Math.random()*100,
+      life:0, maxLife:0.7+Math.random()*0.6,
+      alpha:0.7+Math.random()*0.3,
+    });
+  }
+
+  function drawShootingStars(dt){
+    for(var i=shootingStars.length-1;i>=0;i--){
+      var s=shootingStars[i];
+      s.life+=dt; s.x+=s.vx*dt; s.y+=s.vy*dt;
+      if(s.life>s.maxLife||s.x>W+120||s.y>H+60){shootingStars.splice(i,1);continue;}
+      var p=s.life/s.maxLife;
+      var bright=Math.sin(p*Math.PI);
+      var a=s.alpha*bright;
+      if(a<0.01)continue;
+      var ang=Math.atan2(s.vy,s.vx);
+      var tailX=s.x-Math.cos(ang)*s.len*p;
+      var tailY=s.y-Math.sin(ang)*s.len*p;
+      var grad=ctx.createLinearGradient(s.x,s.y,tailX,tailY);
+      grad.addColorStop(0,'rgba(245,245,255,'+a.toFixed(3)+')');
+      grad.addColorStop(0.4,'rgba(220,230,255,'+(a*0.4).toFixed(3)+')');
+      grad.addColorStop(1,'rgba(200,215,255,0)');
+      ctx.beginPath(); ctx.moveTo(s.x,s.y); ctx.lineTo(tailX,tailY);
+      ctx.strokeStyle=grad; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.beginPath(); ctx.arc(s.x,s.y,1.8,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,255,255,'+a.toFixed(3)+')'; ctx.fill();
+    }
+  }
+
+  /* ── CANVAS DECORATOR: S2 Ripple ── */
+  function drawRipple(t){
+    if(SCENE_CURRENT!==1)return;
+    var cx=W*0.87,cy=H*0.10;
+    var numR=3,speed=0.5;
+    for(var i=0;i<numR;i++){
+      var phase=((t*speed+i*(1/numR))%1);
+      var r=phase*Math.min(W,H)*0.38;
+      var a=(1-phase)*0.11;
+      if(a<0.005)continue;
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+      ctx.strokeStyle='rgba(224,108,42,'+a.toFixed(3)+')';
+      ctx.lineWidth=1; ctx.stroke();
+    }
+  }
+
+  /* ── CANVAS DECORATOR: S5 Orbital Ring ── */
+  function drawOrbital(t){
+    if(SCENE_CURRENT!==4)return;
+    var cx=W*0.5,cy=H*0.5;
+    var r=Math.min(W,H)*0.30;
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(t*0.12);
+    ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2);
+    ctx.setLineDash([6,18]); ctx.strokeStyle='rgba(224,108,42,0.07)';
+    ctx.lineWidth=1; ctx.stroke();
+    ctx.rotate(t*-0.22);
+    ctx.beginPath(); ctx.arc(0,0,r*0.62,0,Math.PI*2);
+    ctx.setLineDash([4,22]); ctx.strokeStyle='rgba(180,190,210,0.05)';
+    ctx.lineWidth=1; ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  var prevT=0;
   function render(ts){
     var t=ts*0.001;
+    var dt=Math.min(t-prevT,0.05); prevT=t;
 
-    /* Lerp camera base toward current section target (dramatic shift) */
+    /* Camera lerp toward section target */
     var tgt=CAM_TARGETS[SCENE_CURRENT]||CAM_TARGETS[0];
     CAM_BASE.x+=(tgt.x-CAM_BASE.x)*0.022;
     CAM_BASE.y+=(tgt.y-CAM_BASE.y)*0.022;
@@ -696,7 +886,6 @@ window.addEventListener('orientationchange',function(){setTimeout(setVh,250);});
     mouseOff.x+=(targetMouse.x-mouseOff.x)*0.04;
     mouseOff.y+=(targetMouse.y-mouseOff.y)*0.04;
 
-    /* Camera = base + organic drift + mouse */
     var camX=CAM_BASE.x+Math.sin(t*0.038)*32+mouseOff.x*0.35;
     var camY=CAM_BASE.y+Math.cos(t*0.028)*22+mouseOff.y*0.35;
     var camZ=CAM_BASE.z+Math.sin(t*0.018)*48;
@@ -704,6 +893,7 @@ window.addEventListener('orientationchange',function(){setTimeout(setVh,250);});
     ctx.fillStyle='#09090b';
     ctx.fillRect(0,0,W,H);
 
+    /* Neural network projection */
     var proj=[];
     for(var i=0;i<nodes.length;i++){
       var n=nodes[i];
@@ -719,7 +909,7 @@ window.addEventListener('orientationchange',function(){setTimeout(setVh,250);});
     }
     proj.sort(function(a,b){return b.p.dz-a.p.dz;});
 
-    /* Connections — luminous thin lines */
+    /* Connections */
     for(var i=0;i<proj.length;i++){
       var ai=proj[i],na=ai.n,pa=ai.p;
       for(var j=i+1;j<proj.length;j++){
@@ -761,13 +951,24 @@ window.addEventListener('orientationchange',function(){setTimeout(setVh,250);});
       ctx.beginPath(); ctx.arc(p.sx,p.sy,Math.max(0.3,coreR*0.55),0,Math.PI*2);
       ctx.fillStyle='rgba(215,228,240,'+coreAlpha.toFixed(3)+')'; ctx.fill();
     }
+
+    /* Shooting stars (S1 only) */
+    if(SCENE_CURRENT===0||shootingStars.length>0){
+      maybeSpawnStar(t);
+      drawShootingStars(dt);
+    }
+
+    /* Canvas decorators */
+    drawRipple(t);
+    drawOrbital(t);
+
     requestAnimationFrame(render);
   }
   requestAnimationFrame(render);
 })();
 
 /* ══════════════════════════════════════════
-   MOUSE PARALLAX (hero layers only)
+   MOUSE PARALLAX (hero layers)
 ══════════════════════════════════════════ */
 (function(){
   if(window.matchMedia('(max-width:768px)').matches)return;
@@ -805,7 +1006,6 @@ window.addEventListener('orientationchange',function(){setTimeout(setVh,250);});
   var elWord=document.getElementById('typed-word');
   var elAfter=document.getElementById('typed-tail');
   var cursor=document.getElementById('type-cursor');
-  var cta=document.getElementById('earlyCta');
   var TYPE_SPD=22,DEL_SPD=16,PAUSE=3000;
 
   function moveCursor(el){el.insertAdjacentElement('afterend',cursor);cursor.classList.add('active');}
@@ -836,7 +1036,6 @@ window.addEventListener('orientationchange',function(){setTimeout(setVh,250);});
   }
   function done(idx){
     if(idx===0){
-      setTimeout(function(){cta.classList.add('show');},500);
       cursor.style.transition='opacity 0.4s ease'; cursor.style.opacity='0';
       setTimeout(function(){if(cursor.parentNode)cursor.parentNode.removeChild(cursor);},500);
     }
@@ -853,40 +1052,107 @@ window.addEventListener('orientationchange',function(){setTimeout(setVh,250);});
 })();
 
 /* ══════════════════════════════════════════
-   PILLAR CARDS — tap toggle (mobile)
+   BROKER DRUM CAROUSEL
 ══════════════════════════════════════════ */
-document.querySelectorAll('.pillar').forEach(function(p){
-  p.addEventListener('click',function(){p.classList.toggle('tapped');});
-});
-
-/* ══════════════════════════════════════════
-   LOGIC CANVAS SYSTEM
-   Sub-scroll hijacked sections with animated node visualization
-══════════════════════════════════════════ */
-var LOGIC_DATA=[
-  [ /* S4 — Detection steps 1-4 */
-    {px:0.64,py:0.27,num:'01',a:'You Enter.',   b:'Nocturn Activates.',desc:'Position opened. Watch mode enabled automatically. The instrument is identified — no setup required.'},
-    {px:0.76,py:0.54,num:'02',a:'Context',       b:'Mapped.',           desc:'Geopolitical and economic dynamics profiled. The AI understands what drives your asset before anything breaks.'},
-    {px:0.59,py:0.76,num:'03',a:'100+ Sources.', b:'All Night.',        desc:'Wire services, X, Truth Social, Al Jazeera — every feed monitored in real time. Unscheduled events don\'t slip through.'},
-    {px:0.20,py:0.34,num:'04',a:'Impact',         b:'Scored.',           desc:'Every headline classified instantly. Bullish or bearish. Signal or noise. Matched exactly to your position.'},
-  ],
-  [ /* S5 — Execution steps 5-8 */
-    {px:0.22,py:0.28,num:'05',a:'Price',     b:'Agrees.',      desc:'Headlines alone aren\'t enough. Price action must confirm the signal. Both must align before any move is made.'},
-    {px:0.72,py:0.26,num:'06',a:'Capital',   b:'Protected.',   desc:'Execution sent to your broker automatically. One less position exposed overnight. Zero intervention required.'},
-    {px:0.70,py:0.70,num:'07',a:'Model',     b:'Improves.',    desc:'Every session teaches Nocturn more about your instruments and conditions. Each night is better than the last.'},
-    {px:0.25,py:0.74,num:'08',a:'You',       b:'Wake Up.',     desc:'A full intelligence brief waiting. What moved, what broke, what Nocturn did — and what it held, and why.'},
-  ]
+var BROKERS=[
+  'IC Markets','Pepperstone','OANDA','Exness','Axi','FOREX.com',
+  'XM Group','Fusion Markets','IG Group','FP Markets','Vantage','Tickmill',
+  'ThinkMarkets','Admiral Markets','GO Markets','IronFX','BlackBull Markets',
+  'FBS','EightCap','Interactive Brokers','Fidelity Investments','Charles Schwab',
+  'Webull','TradeStation','Tastytrade','TradeZero','Alpaca','Tradier',
+  'Lightspeed','Sterling Trading Tech','E*TRADE','Robinhood','Ally Invest',
+  'Firstrade','Zacks Trade','Public','SogoTrade','ChoiceTrade',
+  'CenterPoint Securities','Cobra Trading'
 ];
 
-var logicSub={3:0,4:0};
-var LOGIC_MAX={3:4,4:4};
+var drumInitialized=false;
+function initBrokerDrum(){
+  if(drumInitialized)return;
+  drumInitialized=true;
+  var inner=document.getElementById('brokerInner');
+  var drum=document.getElementById('brokerDrum');
+  var wrap=document.querySelector('.broker-drum-wrap');
+  var ITEM_H=54;
+  var autoSpeed=0.45;
+  var speed=autoSpeed;
+  /* Triple the list for seamless loop */
+  for(var copy=0;copy<3;copy++){
+    BROKERS.forEach(function(b){
+      var el=document.createElement('div');
+      el.className='broker-item'; el.textContent=b; inner.appendChild(el);
+    });
+  }
+  var loopH=BROKERS.length*ITEM_H;
+  var offset=loopH; /* start at copy 2 */
+  var items=inner.querySelectorAll('.broker-item');
+  var drumH=wrap.offsetHeight||280;
+  var centerY=drumH/2;
+
+  /* Touch drag support */
+  var isDragging=false, dragStartY=0, dragStartOffset=0, dragVel=0, lastDragY=0;
+  wrap.addEventListener('touchstart',function(e){
+    isDragging=true; speed=0;
+    dragStartY=e.touches[0].clientY; dragStartOffset=offset;
+    lastDragY=dragStartY; dragVel=0;
+  },{passive:true});
+  wrap.addEventListener('touchmove',function(e){
+    if(!isDragging)return;
+    var dy=dragStartY-e.touches[0].clientY;
+    dragVel=e.touches[0].clientY-lastDragY; lastDragY=e.touches[0].clientY;
+    offset=dragStartOffset+dy;
+    if(offset>=loopH*2)offset-=loopH;
+    if(offset<0)offset+=loopH;
+  },{passive:true});
+  wrap.addEventListener('touchend',function(){
+    isDragging=false;
+    /* Flick momentum */
+    var momentum=-dragVel*0.35;
+    speed=Math.max(-3,Math.min(3,momentum));
+    /* Ease back to autoSpeed */
+    var ease=setInterval(function(){
+      speed+=(autoSpeed-speed)*0.04;
+      if(Math.abs(speed-autoSpeed)<0.01){speed=autoSpeed;clearInterval(ease);}
+    },16);
+  },{passive:true});
+
+  function update(){
+    if(!isDragging)offset+=speed;
+    if(offset>=loopH*2)offset-=loopH;
+    if(offset<0)offset+=loopH;
+    inner.style.transform='translateY(-'+offset.toFixed(2)+'px)';
+    for(var i=0;i<items.length;i++){
+      var itemTop=i*ITEM_H-offset;
+      var itemCenter=itemTop+ITEM_H*0.5;
+      var dist=Math.abs(itemCenter-centerY);
+      var t=Math.max(0,1-dist/(drumH*0.50));
+      var t2=t*t;
+      items[i].style.fontSize=(13+t2*28).toFixed(1)+'px';
+      items[i].style.opacity=(0.08+t2*0.92).toFixed(3);
+      /* No fontStyle toggle — CSS holds all items at italic; JS only changes size/opacity */
+    }
+    requestAnimationFrame(update);
+  }
+  update();
+}
+
+/* ══════════════════════════════════════════
+   LOGIC CANVAS
+══════════════════════════════════════════ */
+var LOGIC_DATA=[
+  {px:0.64,py:0.27,num:'01',a:'Position Open.',   b:'Intelligence Active.',desc:'Your trade triggers watch mode. The instrument is identified and 100+ sources begin monitoring in real time — no setup required.'},
+  {px:0.76,py:0.54,num:'02',a:'Nocturn Reads',      b:'the Room.',           desc:'Headlines scored, context mapped. Powered by Claude — Nocturn understands exactly what moves your asset before anything breaks overnight.'},
+  {px:0.22,py:0.35,num:'03',a:'Price Confirms.',   b:'Nocturn Acts.',       desc:'Signal + price action must both agree. When they do, broker instruction is sent automatically. Zero intervention.'},
+  {px:0.59,py:0.76,num:'04',a:'You',               b:'Wake Up.',            desc:'Full intelligence brief waiting. What moved, what Nocturn did — and what it held, and exactly why.'},
+];
+
+var logicSub={3:0};
+var LOGIC_MAX={3:4};
 var logicCtrl={};
 
-function createLogicController(canvasId,dataIdx){
+function createLogicController(canvasId){
   var canvas=document.getElementById(canvasId);
   if(!canvas)return null;
   var ctx=canvas.getContext('2d');
-  var data=LOGIC_DATA[dataIdx];
   var W=0,H=0,hubX=0,hubY=0,hubR=0;
   var satPos=[];
   var stepProg=[0,0,0,0];
@@ -898,7 +1164,7 @@ function createLogicController(canvasId,dataIdx){
     canvas.width=W; canvas.height=H;
     hubX=W*0.42; hubY=H*0.50;
     hubR=Math.min(W,H)*0.20;
-    satPos=data.map(function(s){return{x:W*s.px,y:H*s.py};});
+    satPos=LOGIC_DATA.map(function(s){return{x:W*s.px,y:H*s.py};});
   }
 
   function draw(){
@@ -907,7 +1173,7 @@ function createLogicController(canvasId,dataIdx){
     hubT+=0.02;
     var pulse=(Math.sin(hubT)+1)*0.5;
 
-    /* Connection lines (draw first, below everything) */
+    /* Lines */
     stepProg.forEach(function(p,i){
       if(p<=0)return;
       var sp=satPos[i];
@@ -919,27 +1185,24 @@ function createLogicController(canvasId,dataIdx){
       ctx.strokeStyle=grad; ctx.lineWidth=1; ctx.stroke();
     });
 
-    /* Satellite nodes (appear when line ~75% drawn) */
+    /* Satellites */
     stepProg.forEach(function(p,i){
       if(p<0.72)return;
       var sp=satPos[i];
       var a=Math.min(1,(p-0.72)*3.6);
-      /* Outer glow */
       var g=ctx.createRadialGradient(sp.x,sp.y,0,sp.x,sp.y,22);
       g.addColorStop(0,'rgba(195,215,240,'+(a*0.65)+')');
       g.addColorStop(0.45,'rgba(175,200,230,'+(a*0.15)+')');
       g.addColorStop(1,'rgba(175,200,230,0)');
       ctx.beginPath(); ctx.arc(sp.x,sp.y,22,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
-      /* Core */
       ctx.beginPath(); ctx.arc(sp.x,sp.y,3.5,0,Math.PI*2);
       ctx.fillStyle='rgba(225,238,250,'+a+')'; ctx.fill();
-      /* Step label */
       ctx.font='700 9px "Geist Mono",monospace';
       ctx.fillStyle='rgba(224,108,42,'+(a*0.7)+')';
-      ctx.fillText(data[i].num,sp.x+9,sp.y-9);
+      ctx.fillText(LOGIC_DATA[i].num,sp.x+9,sp.y-9);
     });
 
-    /* Hub node */
+    /* Hub */
     var g=ctx.createRadialGradient(hubX,hubY,0,hubX,hubY,hubR);
     g.addColorStop(0,'rgba(225,238,252,0.92)');
     g.addColorStop(0.12,'rgba(200,220,240,'+(0.38+0.1*pulse)+')');
@@ -947,10 +1210,8 @@ function createLogicController(canvasId,dataIdx){
     g.addColorStop(0.58,'rgba(165,190,218,0.03)');
     g.addColorStop(1,'transparent');
     ctx.beginPath(); ctx.arc(hubX,hubY,hubR,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
-    /* Hub core dot */
     ctx.beginPath(); ctx.arc(hubX,hubY,4,0,Math.PI*2);
     ctx.fillStyle='rgba(232,242,255,0.95)'; ctx.fill();
-    /* Hub pulse ring */
     var ringR=hubR*(0.35+0.08*pulse);
     var ringG=ctx.createRadialGradient(hubX,hubY,ringR-2,hubX,hubY,ringR+2);
     ringG.addColorStop(0,'rgba(195,215,235,'+(0.12*pulse)+')');
@@ -973,16 +1234,13 @@ function createLogicController(canvasId,dataIdx){
   resize();
   window.addEventListener('resize',resize);
   draw();
-
   return{
     activateStep:function(si,cb){animateLine(si,cb);},
     reset:function(){stepProg=[0,0,0,0];}
   };
 }
 
-/* Initialize logic canvases */
-logicCtrl[3]=createLogicController('lc1',0);
-logicCtrl[4]=createLogicController('lc2',1);
+logicCtrl[3]=createLogicController('lc1');
 
 function fastTypeEl(el,text,spd,onDone){
   el.textContent='';
@@ -994,62 +1252,46 @@ function fastTypeEl(el,text,spd,onDone){
   })();
 }
 
-function showLogicStep(secIdx,si){
-  var data=LOGIC_DATA[secIdx-3][si];
-  var px=secIdx===3?'l1':'l2';
-  var stepEl=document.getElementById(px+'step');
-  var taEl=document.getElementById(px+'ta');
-  var tbEl=document.getElementById(px+'tb');
-  var descEl=document.getElementById(px+'desc');
-  var hintEl=document.getElementById(px+'hint');
-
+function showLogicStep(si){
+  var data=LOGIC_DATA[si];
+  var stepEl=document.getElementById('l1step');
+  var taEl=document.getElementById('l1ta');
+  var tbEl=document.getElementById('l1tb');
+  var descEl=document.getElementById('l1desc');
   if(stepEl)stepEl.textContent=data.num;
   if(descEl){descEl.classList.remove('show');descEl.textContent=data.desc;}
-  if(hintEl)hintEl.classList.remove('show');
   if(taEl){
     taEl.textContent='';
     if(tbEl)tbEl.textContent='';
     fastTypeEl(taEl,data.a,18,function(){
       fastTypeEl(tbEl,data.b,18,function(){
         if(descEl)descEl.classList.add('show');
-        setTimeout(function(){
-          if(hintEl){
-            var isLast=si===LOGIC_MAX[secIdx]-1;
-            hintEl.textContent=isLast?'scroll to continue →':'scroll to advance ↓';
-            hintEl.classList.add('show');
-          }
-        },400);
       });
     });
   }
-  if(logicCtrl[secIdx])logicCtrl[secIdx].activateStep(si);
+  if(logicCtrl[3])logicCtrl[3].activateStep(si);
 }
 
-function resetLogicSection(idx){
-  logicSub[idx]=0;
-  if(logicCtrl[idx])logicCtrl[idx].reset();
-  var px=idx===3?'l1':'l2';
-  var taEl=document.getElementById(px+'ta');
-  var tbEl=document.getElementById(px+'tb');
-  var descEl=document.getElementById(px+'desc');
-  var hintEl=document.getElementById(px+'hint');
-  if(taEl)taEl.textContent=' ';
-  if(tbEl)tbEl.textContent=' ';
+function resetLogicSection(){
+  logicSub[3]=0;
+  if(logicCtrl[3])logicCtrl[3].reset();
+  var taEl=document.getElementById('l1ta');
+  var tbEl=document.getElementById('l1tb');
+  var descEl=document.getElementById('l1desc');
+  if(taEl)taEl.textContent=' ';
+  if(tbEl)tbEl.textContent=' ';
   if(descEl){descEl.classList.remove('show');descEl.textContent='';}
-  if(hintEl)hintEl.classList.remove('show');
 }
 
 /* ══════════════════════════════════════════
    SECTION TINT SYSTEM
-   Separate layer, JS cross-fades between section tints
-   Much more noticeable than before
 ══════════════════════════════════════════ */
 var TINTS=[
-  null, /* S1: no tint */
+  null,
   'radial-gradient(ellipse at 88% 12%, rgba(224,108,42,0.18) 0%, rgba(210,95,30,0.07) 35%, transparent 62%)',
   'radial-gradient(ellipse at 52% 58%, rgba(100,140,220,0.16) 0%, rgba(85,125,210,0.06) 40%, transparent 66%)',
   'radial-gradient(ellipse at 14% 22%, rgba(224,108,42,0.15) 0%, rgba(200,88,28,0.06) 40%, transparent 62%)',
-  'radial-gradient(ellipse at 83% 74%, rgba(224,108,42,0.15) 0%, rgba(200,88,28,0.06) 40%, transparent 62%)',
+  'radial-gradient(ellipse at 83% 74%, rgba(224,108,42,0.12) 0%, rgba(200,88,28,0.04) 40%, transparent 62%)',
   'radial-gradient(ellipse at 50% 50%, rgba(145,158,180,0.12) 0%, rgba(130,142,165,0.04) 42%, transparent 68%)',
   'radial-gradient(ellipse at 50% 36%, rgba(224,108,42,0.22) 0%, rgba(224,108,42,0.1) 30%, transparent 58%)',
 ];
@@ -1077,22 +1319,33 @@ function updateTint(idx){
 
   var dots=Array.from(document.querySelectorAll('.prog-dot'));
   var secCur=document.getElementById('sec-cur');
-  var navEl=document.getElementById('navEl');
   var keyHint=document.getElementById('key-hint');
 
   setTimeout(function(){keyHint.classList.add('hidden');},4500);
 
   function pad(n){return n<10?'0'+n:''+n;}
 
+  var gsh=document.getElementById('global-scroll-hint');
+
+  function updateScrollHint(idx){
+    if(!gsh)return;
+    /* Hide on last section (S7) */
+    if(idx>=6){ gsh.classList.remove('show'); return; }
+    /* Logic section (3) has its own internal hint — hide global while active,
+       but show it initially before the first step's hint appears */
+    if(idx===3){ gsh.textContent='scroll to advance ↓'; gsh.classList.add('show'); return; }
+    gsh.textContent=idx===5?'scroll to learn more ↓':'scroll to advance ↓';
+    gsh.classList.add('show');
+  }
+
   function updateUI(idx){
     SCENE_CURRENT=idx;
     dots.forEach(function(d,i){d.classList.toggle('active',i===idx);});
     secCur.textContent=pad(idx+1);
-    navEl.classList.toggle('nav-hidden',idx!==0);
     updateTint(idx);
+    updateScrollHint(idx);
   }
 
-  /* Reset incoming section content BEFORE transition (while still invisible) */
   function resetSection(idx){
     if(idx===1){
       ['ps0','ps1','ps2'].forEach(function(id){document.getElementById(id).classList.remove('show');});
@@ -1100,17 +1353,21 @@ function updateTint(idx){
       document.getElementById('pv1').textContent='—';
       document.getElementById('pv2').textContent='—';
     }
-    if(idx===2){['p0','p1','p2'].forEach(function(id){document.getElementById(id).classList.remove('show');});}
-    if(idx===3||idx===4){resetLogicSection(idx);}
+    if(idx===2){['r0','r1','r2'].forEach(function(id){document.getElementById(id).classList.remove('show');});}
+    if(idx===3){resetLogicSection();}
     if(idx===5){
       var g=document.getElementById('gapGrid');
       g.classList.remove('show'); g.style.transition='none';
+    }
+    if(idx===6){
+      var fill=document.getElementById('foundingFill');
+      if(fill)fill.style.width='0%';
     }
   }
 
   var EASING='cubic-bezier(0.76,0,0.24,1)';
   var DUR=680;
-  var TRANS=['curtain','scale','slide','push','diagonal','bloom'];
+  var TRANS_CYCLE=['curtain','scale','slide','push','diagonal','bloom'];
 
   function runTransition(fromEl,toEl,type,dir){
     var inStart={},outEnd={};
@@ -1149,32 +1406,29 @@ function updateTint(idx){
     });});
   }
 
-  var TRANS_CYCLE=['curtain','scale','slide','push','diagonal','bloom'];
-
   function goTo(nextIdx,dir){
     if(isAnimating)return;
 
-    /* Sub-scroll within logic sections */
+    /* Sub-scroll within logic section (index 3) */
     if(LOGIC_MAX[current]!==undefined){
       var now=Date.now();
       if(now-lastTime<DEBOUNCE)return;
       if(dir>0&&logicSub[current]<LOGIC_MAX[current]-1){
         isAnimating=true; lastTime=now;
         logicSub[current]++;
-        showLogicStep(current,logicSub[current]);
+        showLogicStep(logicSub[current]);
         setTimeout(function(){isAnimating=false;},DEBOUNCE);
         return;
       }
       if(dir<0&&logicSub[current]>0){
         isAnimating=true; lastTime=now;
         logicSub[current]--;
-        showLogicStep(current,logicSub[current]);
+        showLogicStep(logicSub[current]);
         setTimeout(function(){isAnimating=false;},DEBOUNCE);
         return;
       }
     }
 
-    /* Normal section transition */
     if(nextIdx<0||nextIdx>=TOTAL)return;
     var now=Date.now();
     if(now-lastTime<DEBOUNCE)return;
@@ -1187,7 +1441,23 @@ function updateTint(idx){
 
   function go(dir){goTo(current+dir,dir);}
 
+  /* Wheel — S7 scrolls freely; only navigate away at boundaries */
+  var s7Content=document.querySelector('.s-access .s-content');
   window.addEventListener('wheel',function(e){
+    if(current===6){
+      /* In S7: let natural scroll happen, only hijack at top boundary going up */
+      var atTop=!s7Content||s7Content.scrollTop<=1;
+      if(e.deltaY>0){
+        /* Scrolling down inside S7 — always let it through */
+        return;
+      } else {
+        /* Scrolling up — only go to S6 if at very top */
+        if(!atTop)return;
+        e.preventDefault();
+        go(-1);
+        return;
+      }
+    }
     e.preventDefault();
     if(Math.abs(e.deltaY)<WHEEL_THRESH)return;
     go(e.deltaY>0?1:-1);
@@ -1202,22 +1472,45 @@ function updateTint(idx){
   window.addEventListener('touchstart',function(e){touchStartY=e.touches[0].clientY;},{passive:true});
   window.addEventListener('touchend',function(e){
     var dy=touchStartY-e.changedTouches[0].clientY;
-    if(Math.abs(dy)>50)go(dy>0?1:-1);
+    if(Math.abs(dy)<50)return;
+    if(current===6){
+      /* In S7: swipe up (dy>0) only exits if at top of scroll container */
+      if(dy<0){var atTop=!s7Content||s7Content.scrollTop<=1; if(!atTop)return; go(-1);}
+      /* Swipe down in S7: do nothing — let natural scroll handle it */
+      return;
+    }
+    go(dy>0?1:-1);
   },{passive:true});
 
+  /* Direct section jump — bypasses debounce, used by dots and nav button */
+  function jumpTo(idx){
+    if(isAnimating)return;
+    if(idx===current)return;
+    var dir=idx>current?1:-1;
+    isAnimating=true; lastTime=Date.now();
+    resetSection(idx);
+    var type=TRANS_CYCLE[current%TRANS_CYCLE.length];
+    updateUI(idx);
+    runTransition(sections[current],sections[idx],type,dir);
+  }
+
   dots.forEach(function(dot,i){
-    dot.addEventListener('click',function(){goTo(i,i>current?1:-1);});
+    dot.addEventListener('click',function(e){
+      e.stopPropagation();
+      jumpTo(i);
+    });
   });
 
-  window.jumpToAccess=function(){goTo(6,1);};
+  window.jumpToAccess=function(){jumpTo(6);};
 
   /* ── SECTION ENTER ANIMATIONS ── */
   function onEnter(idx){
     if(idx===1)enterProblem();
     if(idx===2)enterSolution();
-    if(idx===3){resetLogicSection(3);showLogicStep(3,0);}
-    if(idx===4){resetLogicSection(4);showLogicStep(4,0);}
+    if(idx===3){resetLogicSection();showLogicStep(0);}
+    if(idx===4)initBrokerDrum();
     if(idx===5)enterGap();
+    if(idx===6)enterAccess();
   }
 
   function enterProblem(){
@@ -1243,8 +1536,8 @@ function updateTint(idx){
   }
 
   function enterSolution(){
-    ['p0','p1','p2'].forEach(function(id,i){
-      setTimeout(function(){document.getElementById(id).classList.add('show');},180+i*150);
+    ['r0','r1','r2'].forEach(function(id,i){
+      setTimeout(function(){document.getElementById(id).classList.add('show');},160+i*140);
     });
   }
 
@@ -1252,6 +1545,13 @@ function updateTint(idx){
     var g=document.getElementById('gapGrid');
     g.style.transition='';
     setTimeout(function(){g.classList.add('show');},150);
+  }
+
+  function enterAccess(){
+    setTimeout(function(){
+      var fill=document.getElementById('foundingFill');
+      if(fill)fill.style.width='0%';
+    },100);
   }
 
   updateUI(0);
