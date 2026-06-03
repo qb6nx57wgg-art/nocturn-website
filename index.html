@@ -228,133 +228,34 @@ body{
 /* ─── WHAT NOCTURN DOES ─── */
 #what-nocturn-does{background:#ffffff;}
 .showcase-header{margin-bottom:64px;}
-.showcase-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:20px;position:relative;
-}
 
-/* SVG thread */
-.thread-wrap{
-  position:absolute;left:-36px;top:0;bottom:0;
-  width:2px;overflow:visible;pointer-events:none;
+.feature-rows{
+  display:flex;flex-direction:column;
+  border-top:1px solid rgba(26,26,28,0.08);
 }
-.thread-path{
-  fill:none;stroke:rgba(224,108,42,0.35);stroke-width:1.5;
-  stroke-dasharray:800;stroke-dashoffset:800;
-  transition:stroke-dashoffset 1.6s cubic-bezier(0.32,0.72,0,1);
+.feature-row{
+  display:grid;grid-template-columns:56px 1fr auto;
+  align-items:start;gap:32px;
+  padding:40px 0;
+  border-bottom:1px solid rgba(26,26,28,0.08);
 }
-.thread-path.drawn{stroke-dashoffset:0;}
-
-/* Cards */
-.s-card{
-  background:#0d0d10;border-radius:22px;overflow:hidden;
-  display:flex;flex-direction:column;min-height:500px;
-  will-change:transform;
-  transition:transform 0.6s cubic-bezier(0.32,0.72,0,1);
+.feature-num{
+  font-size:11px;font-weight:500;letter-spacing:0.18em;
+  color:rgba(26,26,28,0.28);padding-top:4px;
 }
-.card-eyebrow{
-  font-size:10px;font-weight:500;letter-spacing:0.2em;
-  text-transform:uppercase;color:rgba(232,232,232,0.3);
-  padding:24px 24px 0;
+.feature-title{
+  font-size:22px;font-weight:600;color:#0d0d10;
+  letter-spacing:-0.02em;margin-bottom:12px;
 }
-.card-viz{
-  flex:1;position:relative;
-  display:flex;align-items:center;justify-content:center;
-  padding:16px;min-height:260px;overflow:hidden;
+.feature-desc{
+  font-size:16px;color:rgba(26,26,28,0.52);line-height:1.7;max-width:600px;
 }
-#cs-canvas{width:100%;height:100%;display:block;}
-.card-foot{
-  padding:18px 24px 24px;
-  border-top:1px solid rgba(255,255,255,0.05);
+.feature-tag{
+  font-size:11px;font-weight:500;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--accent);
+  background:rgba(224,108,42,0.08);border-radius:100px;
+  padding:6px 14px;white-space:nowrap;margin-top:2px;
 }
-.card-step-title{
-  font-size:14px;font-weight:600;color:#f0f0f0;margin-bottom:5px;
-  min-height:1.4em;
-}
-.card-step-desc{
-  font-size:12px;color:rgba(232,232,232,0.38);line-height:1.65;
-  min-height:3.3em;
-}
-.cs-controls{display:flex;align-items:center;gap:10px;margin-top:14px;}
-.cs-btn{
-  width:28px;height:28px;border-radius:50%;
-  border:1px solid rgba(255,255,255,0.13);
-  background:none;color:rgba(232,232,232,0.45);
-  font-size:12px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:border-color 0.2s,color 0.2s;flex-shrink:0;
-}
-.cs-btn:hover:not(:disabled){border-color:rgba(255,255,255,0.38);color:rgba(232,232,232,0.9);}
-.cs-btn:disabled{opacity:0.2;cursor:default;}
-.cs-dots{display:flex;gap:5px;align-items:center;}
-.cs-dot{
-  width:4px;height:4px;border-radius:50%;
-  background:rgba(255,255,255,0.18);
-  transition:all 0.3s cubic-bezier(0.32,0.72,0,1);flex-shrink:0;
-}
-.cs-dot.active{background:var(--accent);width:12px;border-radius:2px;}
-
-/* ── News dashboard card ── */
-.nd-wrap{display:flex;gap:8px;width:100%;height:100%;}
-.nd-feed{flex:1;display:flex;flex-direction:column;gap:5px;}
-.nd-item{
-  background:rgba(255,255,255,0.03);border-radius:8px;
-  padding:8px 10px;border:1px solid rgba(255,255,255,0.045);
-}
-.nd-src{
-  font-size:9px;font-weight:500;letter-spacing:0.1em;
-  text-transform:uppercase;color:rgba(232,232,232,0.3);margin-bottom:3px;
-}
-.nd-hl{font-size:11px;color:rgba(232,232,232,0.72);line-height:1.38;}
-.nd-tag{
-  display:inline-block;font-size:9px;font-weight:500;
-  padding:2px 7px;border-radius:100px;margin-top:4px;
-}
-.nd-tag.bear{background:rgba(184,107,90,0.18);color:#b86b5a;}
-.nd-tag.bull{background:rgba(78,163,137,0.18);color:#4ea389;}
-.nd-tag.high{background:rgba(224,108,42,0.15);color:var(--accent);}
-.nd-tag.neu{background:rgba(232,232,232,0.06);color:rgba(232,232,232,0.35);}
-.nd-panel{width:86px;flex-shrink:0;display:flex;flex-direction:column;gap:5px;}
-.nd-inst{
-  background:rgba(255,255,255,0.02);
-  border:1px solid rgba(255,255,255,0.055);
-  border-radius:8px;padding:9px 6px;text-align:center;
-}
-.nd-iname{
-  font-size:10px;font-weight:600;color:rgba(232,232,232,0.5);
-  letter-spacing:0.04em;margin-bottom:4px;
-}
-.nd-sent{
-  font-size:9px;font-weight:500;text-transform:uppercase;
-  letter-spacing:0.07em;margin-bottom:3px;
-}
-.nd-sent.bear{color:#b86b5a;}
-.nd-sent.bull{color:#4ea389;}
-.nd-sent.acc{color:var(--accent);}
-.nd-score{font-size:18px;font-weight:600;line-height:1;}
-.nd-score.neg{color:#b86b5a;}
-.nd-score.pos{color:#4ea389;}
-.nd-score.acc{color:var(--accent);}
-.callout{
-  position:absolute;
-  font-size:9px;font-weight:500;color:rgba(232,232,232,0.55);
-  background:rgba(9,9,11,0.82);border:1px solid rgba(255,255,255,0.09);
-  border-radius:5px;padding:4px 8px;white-space:nowrap;pointer-events:none;z-index:2;
-}
-.callout-tl{top:10px;left:10px;}
-.callout-br{bottom:10px;right:10px;}
-
-/* ── Flowchart card ── */
-#fc-svg{width:100%;height:100%;overflow:visible;}
-.fc-box{fill:rgba(255,255,255,0.035);stroke:rgba(255,255,255,0.09);stroke-width:1;}
-.fc-box-acc{fill:rgba(224,108,42,0.1);stroke:rgba(224,108,42,0.28);stroke-width:1;}
-.fc-txt{
-  fill:rgba(232,232,232,0.65);
-  font-family:'Inter',sans-serif;font-size:10.5px;font-weight:500;
-  text-anchor:middle;dominant-baseline:middle;
-}
-.fc-line{stroke:rgba(255,255,255,0.12);stroke-width:1.5;fill:none;}
-.fc-line-acc{stroke:rgba(224,108,42,0.35);stroke-width:1.5;fill:none;}
 
 /* ─── COVERAGE ─── */
 #coverage{
@@ -553,8 +454,8 @@ footer{
 
   #hero{min-height:calc(100dvh + 80px);}
   .hero-content{padding:18vh 28px 48px;}
-  .hero-line1{font-size:clamp(26px,7.5vw,44px);}
-  .hero-headline{font-size:clamp(22px,6vw,36px);margin-bottom:16px;line-height:1.04;}
+  .hero-line1{font-size:clamp(48px,13vw,72px);}
+  .hero-headline{font-size:clamp(40px,11vw,60px);margin-bottom:16px;line-height:1.02;}
   .hero-sub-label{font-size:10px;letter-spacing:0.2em;margin-bottom:16px;}
   .hero-built{font-size:16px;}
   .hero-built .cycling-word{font-size:clamp(20px,5vw,30px);}
@@ -566,9 +467,10 @@ footer{
   .s-h2 em{font-size:clamp(34px,9.5vw,56px);}
   .s-sub{font-size:16px;}
 
-  .showcase-grid{grid-template-columns:1fr;gap:14px;}
-  .s-card{min-height:420px;}
-  .thread-wrap{display:none;}
+  .feature-row{grid-template-columns:40px 1fr;gap:20px;padding:28px 0;}
+  .feature-tag{display:none;}
+  .feature-title{font-size:18px;margin-bottom:8px;}
+  .feature-desc{font-size:15px;}
 
   #coverage{border-radius:28px;margin:24px 0;}
   .cov-stats{grid-template-columns:1fr;border-top:none;}
@@ -596,8 +498,8 @@ footer{
   .mob-links a{font-size:36px;}
 }
 @media(max-width:390px){
-  .hero-line1{font-size:24px;}
-  .hero-headline{font-size:20px;}
+  .hero-line1{font-size:40px;}
+  .hero-headline{font-size:34px;}
   .hero-built .cycling-word{font-size:22px;}
 }
 </style>
@@ -658,142 +560,30 @@ footer{
       <p class="s-sub reveal reveal-d2">From news detection to broker execution — Nocturn operates while you sleep, so your positions don't have to.</p>
     </div>
 
-    <div class="showcase-grid" id="showcase-grid">
-      <!-- SVG thread -->
-      <div class="thread-wrap" aria-hidden="true">
-        <svg width="2" height="100%" viewBox="0 0 2 800" preserveAspectRatio="none" overflow="visible">
-          <path class="thread-path" id="thread-path" d="M1,0 L1,800"/>
-        </svg>
+    <div class="feature-rows" id="showcase-grid">
+      <div class="feature-row reveal">
+        <div class="feature-num">01</div>
+        <div class="feature-body">
+          <p class="feature-title">Market Intelligence</p>
+          <p class="feature-desc">The moment you open a position, Nocturn identifies the instrument and begins monitoring 100+ news sources in real time. No setup required. Watch mode is automatic.</p>
+        </div>
+        <div class="feature-tag">News Detection</div>
       </div>
-
-      <!-- Card 1: Candlestick -->
-      <div class="s-card reveal">
-        <p class="card-eyebrow">Market Intelligence</p>
-        <div class="card-viz">
-          <canvas id="cs-canvas"></canvas>
+      <div class="feature-row reveal reveal-d1">
+        <div class="feature-num">02</div>
+        <div class="feature-body">
+          <p class="feature-title">AI Classification</p>
+          <p class="feature-desc">Every headline is scored for sentiment, relevance, and instrument-specific impact — powered by Claude. Nocturn understands context, not just keywords. Geopolitics, macro shifts, rate decisions: all classified before markets open.</p>
         </div>
-        <div class="card-foot">
-          <div class="card-step-title" id="cs-title">Position Entered</div>
-          <div class="card-step-desc" id="cs-desc">Your trade triggers watch mode. Nocturn identifies the instrument and activates 100+ source monitoring.</div>
-          <div class="cs-controls">
-            <button class="cs-btn" id="cs-prev" disabled>←</button>
-            <div class="cs-dots" id="cs-dots">
-              <span class="cs-dot active"></span>
-              <span class="cs-dot"></span>
-              <span class="cs-dot"></span>
-              <span class="cs-dot"></span>
-            </div>
-            <button class="cs-btn" id="cs-next">→</button>
-          </div>
-        </div>
+        <div class="feature-tag">Powered by Claude</div>
       </div>
-
-      <!-- Card 2: News Dashboard -->
-      <div class="s-card reveal reveal-d1">
-        <p class="card-eyebrow">News Classification</p>
-        <div class="card-viz" style="align-items:flex-start;padding:14px;">
-          <span class="callout callout-tl">AI Classified · Live</span>
-          <span class="callout callout-br">100+ Sources Monitored</span>
-          <div class="nd-wrap">
-            <div class="nd-feed">
-              <div class="nd-item">
-                <div class="nd-src">Reuters</div>
-                <div class="nd-hl">Fed signals prolonged pause on rate cuts amid inflation data</div>
-                <span class="nd-tag bear">Bearish XAU</span>
-              </div>
-              <div class="nd-item">
-                <div class="nd-src">Bloomberg</div>
-                <div class="nd-hl">Middle East tensions escalate after overnight diplomatic breakdown</div>
-                <span class="nd-tag high">High Impact</span>
-              </div>
-              <div class="nd-item">
-                <div class="nd-src">WSJ</div>
-                <div class="nd-hl">Dollar surges as risk-off sentiment takes hold in Asian markets</div>
-                <span class="nd-tag bear">Bearish</span>
-              </div>
-              <div class="nd-item">
-                <div class="nd-src">Financial Times</div>
-                <div class="nd-hl">ECB holds rates unchanged, euro steady against major pairs</div>
-                <span class="nd-tag neu">Neutral</span>
-              </div>
-            </div>
-            <div class="nd-panel">
-              <div class="nd-inst">
-                <div class="nd-iname">XAU/USD</div>
-                <div class="nd-sent bear">Bearish</div>
-                <div class="nd-score neg">−82</div>
-              </div>
-              <div class="nd-inst">
-                <div class="nd-iname">USD/JPY</div>
-                <div class="nd-sent acc">Alert</div>
-                <div class="nd-score acc">↑</div>
-              </div>
-              <div class="nd-inst">
-                <div class="nd-iname">EUR/USD</div>
-                <div class="nd-sent bull">Neutral</div>
-                <div class="nd-score pos">+12</div>
-              </div>
-            </div>
-          </div>
+      <div class="feature-row reveal reveal-d2">
+        <div class="feature-num">03</div>
+        <div class="feature-body">
+          <p class="feature-title">Automated Execution</p>
+          <p class="feature-desc">When news signal and price action both confirm a risk event, Nocturn sends an instruction directly to your broker. Zero manual intervention. You wake up to a brief — not a margin call.</p>
         </div>
-        <div class="card-foot">
-          <div class="card-step-title">Live Classification Engine</div>
-          <div class="card-step-desc">Every headline scored for sentiment, relevance, and instrument-specific impact in real time.</div>
-        </div>
-      </div>
-
-      <!-- Card 3: Flowchart -->
-      <div class="s-card reveal reveal-d2">
-        <p class="card-eyebrow">Automated Execution</p>
-        <div class="card-viz">
-          <svg id="fc-svg" viewBox="0 0 220 310" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-                <path d="M0,0 L6,3 L0,6 Z" fill="rgba(255,255,255,0.15)"/>
-              </marker>
-              <marker id="arr-acc" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-                <path d="M0,0 L6,3 L0,6 Z" fill="rgba(224,108,42,0.4)"/>
-              </marker>
-            </defs>
-            <!-- Node 1: News Feed -->
-            <rect x="60" y="4" width="100" height="28" rx="8" class="fc-box"/>
-            <text x="110" y="18" class="fc-txt">News Feed</text>
-            <!-- Arrow 1→2 left, 1→3 right -->
-            <line x1="85" y1="32" x2="60" y2="68" class="fc-line" marker-end="url(#arr)"/>
-            <line x1="135" y1="32" x2="160" y2="68" class="fc-line" marker-end="url(#arr)"/>
-            <!-- Node 2: AI Classification -->
-            <rect x="6" y="68" width="108" height="28" rx="8" class="fc-box"/>
-            <text x="60" y="82" class="fc-txt">AI Classification</text>
-            <!-- Node 3: Climate Context -->
-            <rect x="106" y="68" width="108" height="28" rx="8" class="fc-box"/>
-            <text x="160" y="82" class="fc-txt">Climate Context</text>
-            <!-- Arrow 2→4, 3→4 -->
-            <line x1="60" y1="96" x2="95" y2="136" class="fc-line" marker-end="url(#arr)"/>
-            <line x1="160" y1="96" x2="125" y2="136" class="fc-line" marker-end="url(#arr)"/>
-            <!-- Node 4: Position Check -->
-            <rect x="50" y="136" width="120" height="28" rx="8" class="fc-box"/>
-            <text x="110" y="150" class="fc-txt">Position Check</text>
-            <!-- Arrow 4→5 -->
-            <line x1="110" y1="164" x2="110" y2="194" class="fc-line" marker-end="url(#arr)"/>
-            <!-- Node 5: Price Confirmation -->
-            <rect x="40" y="194" width="140" height="28" rx="8" class="fc-box"/>
-            <text x="110" y="208" class="fc-txt">Price Confirmation</text>
-            <!-- Arrow 5→6 -->
-            <line x1="110" y1="222" x2="110" y2="252" class="fc-line-acc" marker-end="url(#arr-acc)"/>
-            <!-- Node 6: Execute or Alert -->
-            <rect x="40" y="252" width="140" height="28" rx="8" class="fc-box-acc"/>
-            <text x="110" y="266" class="fc-txt" style="fill:rgba(224,108,42,0.85);">Execute or Alert</text>
-            <!-- Arrow 6→7 -->
-            <line x1="110" y1="280" x2="110" y2="306" class="fc-line" marker-end="url(#arr)"/>
-            <!-- Node 7: Outcome Logged -->
-            <rect x="55" y="282" width="110" height="26" rx="8" class="fc-box"/>
-            <text x="110" y="295" class="fc-txt" style="font-size:10px;">Outcome Logged</text>
-          </svg>
-        </div>
-        <div class="card-foot">
-          <div class="card-step-title">7-Node Decision System</div>
-          <div class="card-step-desc">News → Classification → Context → Check → Confirmation → Execution → Report. Every step logged.</div>
-        </div>
+        <div class="feature-tag">Broker Execution</div>
       </div>
     </div>
   </div>
@@ -1240,180 +1030,6 @@ window.closeMobNav=closeMobNav;
   },PAUSE);
 })();
 
-/* ══════════════════════════════════════════
-   CANDLESTICK CANVAS
-══════════════════════════════════════════ */
-(function(){
-  var canvas=document.getElementById('cs-canvas');
-  if(!canvas)return;
-
-  var CANDLE_DATA=[
-    {o:1895,h:1908,l:1888,c:1903},
-    {o:1903,h:1916,l:1899,c:1913},
-    {o:1913,h:1921,l:1907,c:1909},
-    {o:1909,h:1923,l:1905,c:1919},
-    {o:1919,h:1931,l:1915,c:1927},
-    {o:1927,h:1939,l:1921,c:1935}, /* ENTRY: index 5 */
-    {o:1935,h:1943,l:1929,c:1941},
-    {o:1941,h:1949,l:1936,c:1945},
-    {o:1945,h:1953,l:1939,c:1943},
-    {o:1943,h:1947,l:1934,c:1937}, /* NEWS: index 9 */
-    {o:1937,h:1939,l:1922,c:1926},
-    {o:1926,h:1930,l:1916,c:1920},
-    {o:1920,h:1926,l:1912,c:1914},
-    {o:1914,h:1920,l:1906,c:1910},
-    {o:1910,h:1916,l:1902,c:1906},
-    {o:1906,h:1912,l:1898,c:1902}
-  ];
-
-  var CS_STEPS=[
-    {title:'Position Entered',desc:'Your trade triggers watch mode. Nocturn identifies the instrument and activates 100+ source monitoring.'},
-    {title:'Breaking News Detected',desc:'A geopolitical headline breaks. Nocturn classifies it as high-impact and bearish for XAU/USD in seconds.'},
-    {title:'Dual Confirmation',desc:'Price action confirms the news classification. Both signals agree — protection is queued.'},
-    {title:'Position Protected',desc:'Exit order executed at candle 10. Capital protected before the drop continued further overnight.'}
-  ];
-
-  var csStep=0;
-
-  function rr(ctx,x,y,w,h,r){
-    ctx.beginPath();
-    ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arc(x+w-r,y+r,r,-Math.PI/2,0);
-    ctx.lineTo(x+w,y+h-r);ctx.arc(x+w-r,y+h-r,r,0,Math.PI/2);
-    ctx.lineTo(x+r,y+h);ctx.arc(x+r,y+h-r,r,Math.PI/2,Math.PI);
-    ctx.lineTo(x,y+r);ctx.arc(x+r,y+r,r,Math.PI,-Math.PI/2);
-    ctx.closePath();
-  }
-
-  function drawCS(step){
-    var dpr=Math.min(window.devicePixelRatio||1,2);
-    var rect=canvas.parentElement.getBoundingClientRect();
-    var W=rect.width||220;var H=rect.height||260;
-    canvas.width=W*dpr;canvas.height=H*dpr;
-    canvas.style.width=W+'px';canvas.style.height=H+'px';
-    var ctx=canvas.getContext('2d');
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-
-    ctx.fillStyle='#0d0d10';ctx.fillRect(0,0,W,H);
-
-    var data=CANDLE_DATA;
-    var minP=1896,maxP=1955,priceR=maxP-minP;
-    var pad={t:36,b:24,l:10,r:10};
-    var cW=W-pad.l-pad.r;var cH=H-pad.t-pad.b;
-    var cWid=cW/data.length;var bWid=cWid*0.52;
-
-    function pY(p){return pad.t+cH*(1-(p-minP)/priceR);}
-    function cX(i){return pad.l+i*cWid+cWid*0.5;}
-
-    // Grid
-    ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;
-    for(var g=0;g<4;g++){
-      var gy=pad.t+(cH/3)*g;
-      ctx.beginPath();ctx.moveTo(pad.l,gy);ctx.lineTo(W-pad.r,gy);ctx.stroke();
-    }
-
-    // Candles
-    data.forEach(function(c,i){
-      var x=cX(i),openY=pY(c.o),closeY=pY(c.c),highY=pY(c.h),lowY=pY(c.l);
-      var isUp=c.c>=c.o;
-      var color=isUp?'#4ea389':'#b86b5a';
-      var alpha=(step===3&&i>9)?0.28:1;
-      ctx.globalAlpha=alpha;
-      ctx.strokeStyle=color;ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(x,highY);ctx.lineTo(x,lowY);ctx.stroke();
-      var bTop=Math.min(openY,closeY);
-      var bH=Math.max(2,Math.abs(closeY-openY));
-      ctx.fillStyle=color;
-      ctx.fillRect(x-bWid/2,bTop,bWid,bH);
-      ctx.globalAlpha=1;
-    });
-
-    // Step 0+: Entry marker
-    {
-      var ex=cX(5),el_=pY(data[5].l)+14;
-      ctx.beginPath();ctx.arc(ex,el_-6,3.5,0,Math.PI*2);
-      ctx.fillStyle='#4ea389';ctx.fill();
-      ctx.strokeStyle='rgba(78,163,137,0.7)';ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(ex,el_);ctx.lineTo(ex,el_-10);ctx.stroke();
-      ctx.fillStyle='rgba(78,163,137,0.7)';
-      ctx.font='500 8px Inter,sans-serif';ctx.textAlign='center';
-      ctx.fillText('ENTRY',ex,el_+11);
-    }
-
-    // Step 1+: News badge + vertical alert line
-    if(step>=1){
-      var ax=cX(9);
-      ctx.strokeStyle='rgba(224,108,42,0.35)';ctx.lineWidth=1;
-      ctx.setLineDash([3,4]);
-      ctx.beginPath();ctx.moveTo(ax,pad.t);ctx.lineTo(ax,H-pad.b);ctx.stroke();
-      ctx.setLineDash([]);
-      // Badge
-      ctx.fillStyle='rgba(224,108,42,0.12)';
-      ctx.strokeStyle='rgba(224,108,42,0.38)';ctx.lineWidth=1;
-      rr(ctx,W-pad.r-88,pad.t-2,88,22,5);ctx.fill();ctx.stroke();
-      ctx.fillStyle='rgba(224,108,42,0.9)';
-      ctx.font='600 9px Inter,sans-serif';ctx.textAlign='right';
-      ctx.fillText('⚡ BREAKING',W-pad.r-7,pad.t+13);
-    }
-
-    // Step 2+: Dual confirmation dots
-    if(step>=2){
-      var cx9=cX(9),cy9=pY(data[9].c);
-      ctx.beginPath();ctx.arc(cx9,cy9,4.5,0,Math.PI*2);
-      ctx.fillStyle='rgba(224,108,42,0.8)';ctx.fill();
-      ctx.fillStyle='rgba(232,232,232,0.55)';
-      ctx.font='500 8.5px Inter,sans-serif';ctx.textAlign='left';
-      ctx.fillText('✓ Price',cx9+10,cy9-3);
-      ctx.fillText('✓ News',cx9+10,cy9+10);
-    }
-
-    // Step 3: Protection line + badge
-    if(step>=3){
-      var protY=pY(data[9].c-1);
-      ctx.strokeStyle='rgba(224,108,42,0.65)';ctx.lineWidth=1.5;
-      ctx.beginPath();ctx.moveTo(cX(5),protY);ctx.lineTo(W-pad.r,protY);ctx.stroke();
-      // Badge
-      var bx=cX(11);
-      ctx.fillStyle='rgba(224,108,42,0.12)';
-      ctx.strokeStyle='rgba(224,108,42,0.38)';ctx.lineWidth=1;
-      rr(ctx,bx-38,protY-28,76,22,5);ctx.fill();ctx.stroke();
-      ctx.fillStyle='rgba(224,108,42,0.9)';
-      ctx.font='600 9px Inter,sans-serif';ctx.textAlign='center';
-      ctx.fillText('PROTECTED',bx,protY-13);
-    }
-  }
-
-  function updateCS(step){
-    drawCS(step);
-    document.getElementById('cs-title').textContent=CS_STEPS[step].title;
-    document.getElementById('cs-desc').textContent=CS_STEPS[step].desc;
-    document.getElementById('cs-prev').disabled=step===0;
-    document.getElementById('cs-next').disabled=step===CS_STEPS.length-1;
-    var dots=document.querySelectorAll('.cs-dot');
-    dots.forEach(function(d,i){d.classList.toggle('active',i===step);});
-  }
-
-  document.getElementById('cs-prev').addEventListener('click',function(){
-    if(csStep>0){csStep--;updateCS(csStep);}
-  });
-  document.getElementById('cs-next').addEventListener('click',function(){
-    if(csStep<CS_STEPS.length-1){csStep++;updateCS(csStep);}
-  });
-
-  // Swipe
-  var swX=0;
-  canvas.parentElement.addEventListener('touchstart',function(e){swX=e.touches[0].clientX;},{passive:true});
-  canvas.parentElement.addEventListener('touchend',function(e){
-    var dx=swX-e.changedTouches[0].clientX;
-    if(Math.abs(dx)>40){
-      if(dx>0&&csStep<CS_STEPS.length-1){csStep++;updateCS(csStep);}
-      if(dx<0&&csStep>0){csStep--;updateCS(csStep);}
-    }
-  },{passive:true});
-
-  // Initial draw + redraw on resize
-  updateCS(0);
-  window.addEventListener('resize',function(){drawCS(csStep);});
-})();
 
 /* ══════════════════════════════════════════
    INTERSECTION OBSERVER — REVEAL ANIMATIONS
@@ -1426,18 +1042,6 @@ window.closeMobNav=closeMobNav;
     });
   },{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
   els.forEach(function(el){obs.observe(el);});
-
-  // SVG thread
-  var threadObs=new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){
-        document.getElementById('thread-path').classList.add('drawn');
-        threadObs.unobserve(e.target);
-      }
-    });
-  },{threshold:0.2});
-  var grid=document.getElementById('showcase-grid');
-  if(grid)threadObs.observe(grid);
 
   // Founding fill
   var fillObs=new IntersectionObserver(function(entries){
@@ -1453,27 +1057,6 @@ window.closeMobNav=closeMobNav;
   if(ea)fillObs.observe(ea);
 })();
 
-/* ══════════════════════════════════════════
-   PARALLAX ON SHOWCASE CARDS
-══════════════════════════════════════════ */
-(function(){
-  if(window.matchMedia('(max-width:768px)').matches)return;
-  var cards=document.querySelectorAll('.s-card');
-  var section=document.getElementById('what-nocturn-does');
-  var shifts=[-28,-14,-4];
-
-  window.addEventListener('scroll',function(){
-    var st=window.scrollY;
-    var top=section.offsetTop;
-    var h=section.offsetHeight;
-    var viewH=window.innerHeight;
-    if(st+viewH<top||st>top+h)return;
-    var prog=(st-top+viewH)/(h+viewH);
-    cards.forEach(function(c,i){
-      c.style.transform='translateY('+(shifts[i]*prog).toFixed(2)+'px)';
-    });
-  },{passive:true});
-})();
 
 /* ══════════════════════════════════════════
    EMAIL FORM
