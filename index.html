@@ -1,820 +1,307 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nocturn News — The fastest financial news for traders</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Inter:wght@400;500;600&family=Cormorant+Garant:ital,wght@1,400;1,700&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nocturn News — Coming Soon</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Inter:wght@400;500;600&family=Cormorant+Garant:ital,wght@1,400;1,700&display=swap" rel="stylesheet">
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/topojson-client@3/dist/topojson-client.min.js"></script>
+
   <style>
-    /* ─── DESIGN TOKENS ─── */
-    :root {
-      --dark:        #09090b;
-      --orange:      #e06c2a;
-      --teal:        #4ea389;
-      --terra:       #b86b5a;
-      --white:       #ffffff;
-      --body:        #1a1a1c;
-
-      /* on-dark */
-      --hl-dark:     #f0f0f0;
-      --muted-dark:  rgba(232,232,232,0.38);
-      --hair-dark:   rgba(255,255,255,0.07);
-
-      /* on-light */
-      --muted-light: rgba(26,26,28,0.5);
-      --hair-light:  rgba(26,26,28,0.08);
-      --card-light:  rgba(26,26,28,0.03);
-      --pill-light:  rgba(26,26,28,0.06);
-      --pill-text:   rgba(26,26,28,0.6);
-
-      --shadow-sm:   0 2px 12px rgba(0,0,0,0.06);
-      --shadow-md:   0 4px 24px rgba(0,0,0,0.08);
-      --shadow-lg:   0 8px 40px rgba(0,0,0,0.13);
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    /* ─── RESET ─── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', sans-serif; background: var(--white); color: var(--body); overflow-x: hidden; }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: #f0f0f0; }
-    ::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 99px; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
 
-    /* ─── TYPE HELPERS ─── */
-    .eyebrow {
+    body {
+      background-color: #f5f3f0;
+      color: #1a1a1c;
       font-family: 'Inter', sans-serif;
-      font-weight: 500;
-      font-size: 11px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--orange);
     }
 
-    /* ─── LOGO ─── */
+    /* ── Navigation ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 32px 44px;
+      background: transparent;
+      z-index: 100;
+    }
+
     .logo {
       font-family: 'Syne', sans-serif;
       font-weight: 800;
       font-size: 20px;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      text-decoration: none;
-      white-space: nowrap;
       line-height: 1;
     }
-    .logo .sl  { color: rgba(255,255,255,0.3); }
-    .logo .br  { color: #ffffff; }
-    .logo .su  { color: rgba(255,255,255,0.3); }
 
-    /* ─── NAVBAR ─── */
-    #navbar {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-      background: var(--dark);
-      border-bottom: 1px solid var(--hair-dark);
-      height: 56px;
-      display: flex; align-items: center;
-      padding: 0 40px;
-      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-    }
-    #navbar.hidden { transform: translateY(-100%); }
+    .logo .slash  { color: rgba(26, 26, 28, 0.28); }
+    .logo .nocturn { color: #1a1a1c; }
+    .logo .news   { color: rgba(26, 26, 28, 0.28); }
 
-    /* ─── PRICE BANNER ─── */
-    #price-banner {
-      margin-top: 56px;
-      background: var(--dark);
-      height: 42px;
-      overflow: hidden;
+    /* ── Main content ── */
+    main {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      border-bottom: 1px solid var(--hair-dark);
+      justify-content: flex-start;
+      padding-top: 32vh;
     }
-    .ticker-track {
-      display: flex;
-      align-items: center;
-      white-space: nowrap;
-      animation: ticker-scroll 50s linear infinite;
-      will-change: transform;
-    }
-    .ticker-track:hover { animation-play-state: paused; }
-    @keyframes ticker-scroll {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-    .ticker-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0 28px;
-      border-right: 1px solid var(--hair-dark);
-      height: 42px;
-      cursor: default;
-    }
-    .t-sym  { font-weight: 600; font-size: 12px; color: var(--hl-dark); letter-spacing: 0.03em; }
-    .t-px   { font-weight: 400; font-size: 12px; color: var(--muted-dark); }
-    .t-chg  { font-weight: 500; font-size: 12px; }
-    .up     { color: var(--teal); }
-    .down   { color: var(--terra); }
 
-    /* ─── GREETING ─── */
-    #greeting {
-      background: var(--white);
-      padding: 36px 40px 32px;
-      border-bottom: 1px solid var(--hair-light);
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 24px;
+    .headline {
+      text-align: center;
+      line-height: 1;
+      color: #1a1a1c;
     }
-    .greeting-name {
-      font-family: 'Cormorant Garant', serif;
-      font-style: italic;
+
+    .headline-display {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-style: normal;
+      font-size: clamp(24px, 2.8vw, 42px);
+      display: block;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+
+    .headline-bold {
       font-weight: 700;
-      font-size: clamp(22px, 2.6vw, 34px);
-      color: var(--body);
-      line-height: 1;
     }
-    .greeting-meta {
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      background: #1a1a1c;
+      margin-left: 2px;
+      vertical-align: middle;
+      height: 0.85em;
+      animation: blink 0.7s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .coming-soon {
+      margin-top: 14px;
       font-family: 'Inter', sans-serif;
       font-weight: 500;
-      font-size: 12px;
-      color: var(--muted-light);
-      text-align: right;
-      flex-shrink: 0;
-      line-height: 1.6;
-    }
-
-    /* ─── CARD WRAPPER ─── */
-    .dark-section { padding: 28px 24px; background: var(--white); }
-    .dark-card {
-      background: var(--white);
-      border-radius: 40px;
-      padding: 56px 64px;
-      max-width: 1248px;
-      margin: 0 auto;
-    }
-
-    /* ─── SECTION HEADING ─── */
-    .sh { font-size: clamp(28px, 3.5vw, 44px); line-height: 1.2; margin-bottom: 36px; }
-    .sh .i  { font-family: 'Inter', sans-serif; font-weight: 600; color: var(--body); }
-    .sh .cg { font-family: 'Cormorant Garant', serif; font-style: italic; font-weight: 400; color: var(--body); }
-
-    /* light-bg headings */
-    .sh-light .i  { color: var(--body); }
-    .sh-light .cg { color: var(--body); }
-
-    /* ─── SECTION LABEL (big) ─── */
-    .section-label {
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: clamp(28px, 3vw, 40px);
-      letter-spacing: -0.01em;
-      color: var(--body);
-      margin-bottom: 8px;
-    }
-
-    /* ─── RECAP ─── */
-    .recap-meta-row {
-      display: flex;
-      align-items: baseline;
-      gap: 14px;
-      margin-bottom: 36px;
-    }
-    .recap-ts {
-      font-size: 12px;
-      color: var(--muted-light);
-      font-family: 'Inter', sans-serif;
-    }
-    .recap-headline {
-      font-size: clamp(32px, 4vw, 52px);
-      line-height: 1.12;
-      margin-bottom: 52px;
-    }
-    .recap-headline .i  { font-family: 'Inter', sans-serif; font-weight: 600; color: var(--body); }
-    .recap-headline .cg { font-family: 'Cormorant Garant', serif; font-style: italic; font-weight: 400; color: var(--body); }
-
-    .story-list { display: flex; flex-direction: column; }
-    .story-item {
-      padding: 32px 0;
-      border-top: 1px solid var(--hair-light);
-    }
-    .story-item:last-child { border-bottom: 1px solid var(--hair-light); }
-    .story-tag {
-      font-family: 'Inter', sans-serif;
-      font-weight: 500;
-      font-size: 10px;
-      letter-spacing: 0.2em;
+      font-size: 9px;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
-      color: var(--orange);
-      margin-bottom: 10px;
-    }
-    .story-head {
-      font-weight: 600;
-      font-size: 21px;
-      color: var(--body);
-      margin-bottom: 12px;
-      line-height: 1.3;
-    }
-    .story-body {
-      font-weight: 400;
-      font-size: 16px;
-      line-height: 1.72;
-      color: var(--muted-light);
-      max-width: 780px;
+      color: rgba(26, 26, 28, 0.28);
     }
 
-    /* ─── BREAKING NEWS (light bg) ─── */
-    #breaking { background: var(--white); padding: 72px 40px; }
-    .breaking-inner { max-width: 1200px; margin: 0 auto; }
-
-    .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
-    .fp {
-      background: var(--pill-light);
-      border-radius: 99px;
-      padding: 7px 16px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--pill-text);
-      cursor: pointer;
-      border: none;
-      transition: background 0.18s, color 0.18s;
-    }
-    .fp:hover { background: rgba(26,26,28,0.1); color: var(--body); }
-    .fp.active { background: var(--orange); color: #fff; }
-
-    .news-feed { display: flex; flex-direction: column; gap: 10px; }
-    .nc {
-      border-left: 3px solid transparent;
-      background: var(--card-light);
-      border-radius: 10px;
-      padding: 18px 22px;
-      cursor: pointer;
-      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s;
-    }
-    .nc:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); background: rgba(26,26,28,0.06); }
-    .nc[data-impact="HIGH"]   { border-left-color: var(--terra); }
-    .nc[data-impact="MEDIUM"] { border-left-color: var(--orange); }
-    .nc[data-impact="LOW"]    { border-left-color: rgba(26,26,28,0.15); }
-    .nc-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
-    .nc-src  { font-weight: 500; font-size: 12px; color: var(--muted-light); }
-    .nc-time { font-size: 11px; color: var(--muted-light); margin-left: auto; }
-    .badge {
-      border-radius: 99px; padding: 3px 10px;
-      font-weight: 600; font-size: 10px;
-      letter-spacing: 0.08em; text-transform: uppercase;
-    }
-    .badge.HIGH   { background: var(--terra); color: #fff; }
-    .badge.MEDIUM { background: var(--orange); color: #fff; }
-    .badge.LOW    { background: var(--pill-light); color: var(--muted-light); }
-    .nc-head { font-weight: 600; font-size: 16px; color: var(--body); margin-bottom: 8px; line-height: 1.4; }
-    .nc-sum  { font-size: 14px; color: var(--muted-light); margin-bottom: 12px; line-height: 1.52; }
-    .nc-bot  { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .tag { background: var(--pill-light); border-radius: 99px; padding: 4px 10px; font-size: 11px; font-weight: 500; color: var(--pill-text); }
-    .move { font-size: 12px; font-weight: 600; margin-left: auto; }
-
-    /* ─── MARKET CLIMATE (dark card) ─── */
-    .climate-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
-    .cc {
-      background: var(--card-light);
-      border-radius: 16px;
-      padding: 24px 20px;
-      position: relative;
-      overflow: hidden;
-    }
-    .live-dot {
-      position: absolute; top: 16px; right: 16px;
-      width: 7px; height: 7px; border-radius: 50%; background: var(--teal);
-      animation: pulse 2.2s infinite;
-    }
-    @keyframes pulse {
-      0%,100% { box-shadow: 0 0 0 0 rgba(78,163,137,0.5); }
-      50%      { box-shadow: 0 0 0 5px rgba(78,163,137,0); }
-    }
-    .cc-sym  { font-weight: 600; font-size: 17px; color: var(--body); margin-bottom: 3px; }
-    .cc-name { font-size: 12px; color: var(--muted-light); margin-bottom: 12px; }
-    .cc-lbl  {
-      display: inline-block; border-radius: 99px; padding: 3px 11px;
-      font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-      margin-bottom: 16px;
-    }
-    .lbl-terra  { background: rgba(184,107,90,0.18); color: var(--terra); }
-    .lbl-orange { background: rgba(224,108,42,0.18); color: var(--orange); }
-    .lbl-teal   { background: rgba(78,163,137,0.18); color: var(--teal); }
-    .cc-bullets { list-style: none; display: flex; flex-direction: column; gap: 9px; }
-    .cc-bullets li { display: flex; gap: 9px; align-items: flex-start; font-size: 13px; color: var(--muted-light); line-height: 1.45; }
-    .dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
-
-    /* ─── BIGGEST MOVERS (light bg) ─── */
-    #movers { background: var(--white); padding: 72px 40px; }
-    .movers-inner { max-width: 1200px; margin: 0 auto; }
-    .movers-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 14px; }
-    .mc {
-      background: var(--card-light);
-      border-radius: 14px;
-      padding: 22px 18px;
-      cursor: pointer;
-      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s;
-    }
-    .mc:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); background: rgba(26,26,28,0.06); }
-    .mc-sym  { font-weight: 600; font-size: 22px; color: var(--body); margin-bottom: 5px; }
-    .mc-head { font-size: 12px; color: var(--muted-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 14px; }
-    .mc-chg  { font-family: 'Cormorant Garant', serif; font-style: italic; font-size: 28px; font-weight: 700; margin-bottom: 10px; }
-    .sparkline { width: 100%; height: 34px; margin-bottom: 6px; }
-    .mc-time { font-size: 11px; color: var(--muted-light); }
-
-    /* ─── SCHEDULED EVENTS (dark card) ─── */
-    .events-table { width: 100%; border-collapse: collapse; }
-    .events-table thead th {
-      font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--muted-light); padding: 10px 16px; text-align: left;
-      border-bottom: 1px solid var(--hair-light);
-    }
-    .events-table tbody tr:nth-child(even) { background: rgba(26,26,28,0.02); }
-    .events-table tbody td {
-      padding: 14px 16px; font-size: 14px; color: var(--muted-light);
-      border-bottom: 1px solid var(--hair-light); vertical-align: middle;
-    }
-    .ev-time { font-weight: 600; font-size: 13px; color: var(--body); }
-    .ccy {
-      display: inline-flex; align-items: center; gap: 7px;
-      font-weight: 600; font-size: 12px; color: var(--body);
-    }
-    .flag { width: 18px; height: 13px; border-radius: 2px; display: inline-block; vertical-align: middle; }
-    .ev-name { font-weight: 500; font-size: 14px; color: var(--body); }
-    .i-dots { display: flex; gap: 3px; }
-    .id { width: 7px; height: 7px; border-radius: 50%; }
-    .id-high   { background: var(--terra); }
-    .id-mid    { background: var(--orange); }
-    .id-low    { background: var(--teal); }
-    .id-empty  { background: rgba(26,26,28,0.15); }
-    .ev-val { font-size: 13px; color: var(--muted-light); }
-
-    /* ─── COMMUNITY NOTES (light bg) ─── */
-    #notes { background: var(--white); padding: 72px 40px; }
-    .notes-inner { max-width: 1200px; margin: 0 auto; }
-    .notes-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
-    .note {
-      background: var(--card-light);
-      border-radius: 14px;
-      padding: 22px;
-    }
-    .note-orig { font-size: 13px; color: var(--muted-light); margin-bottom: 12px; font-style: italic; line-height: 1.52; }
-    .note-txt  { font-weight: 500; font-size: 15px; color: var(--body); margin-bottom: 14px; line-height: 1.55; }
-    .note-foot { display: flex; align-items: center; justify-content: space-between; }
-    .note-hlp  { font-size: 12px; color: var(--muted-light); }
-    .nbadge {
-      border-radius: 99px; padding: 3px 10px;
-      font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-    }
-    .nb-ctx { background: rgba(78,163,137,0.1);  color: var(--teal); }
-    .nb-cor { background: rgba(184,107,90,0.1); color: var(--terra); }
-    .nb-upd { background: rgba(224,108,42,0.1); color: var(--orange); }
-
-    /* ─── FOOTER ─── */
-    #footer {
-      background: var(--dark);
-      border-top: 1px solid var(--hair-dark);
-      padding: 52px 40px;
-    }
-    .footer-inner {
-      max-width: 1200px; margin: 0 auto;
-      display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px;
-    }
-    .footer-logo-sub { font-size: 14px; color: var(--muted-dark); margin-top: 12px; line-height: 1.55; }
-    .footer-col { display: flex; flex-direction: column; gap: 12px; }
-    .footer-col a { font-size: 14px; color: var(--muted-dark); text-decoration: none; transition: color 0.18s; }
-    .footer-col a:hover { color: var(--hl-dark); }
-    .footer-copy {
-      max-width: 1200px; margin: 32px auto 0;
-      padding-top: 24px; border-top: 1px solid var(--hair-dark);
-      font-size: 12px; color: var(--muted-dark);
+    /* ── Globe ── */
+    #globe-container {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      /* Bigger globe = wider curvature; calc keeps top edge at ~70vh regardless of screen ratio */
+      width: 140vw;
+      height: 140vw;
+      bottom: calc(-140vw + 36vh);
+      pointer-events: none;
     }
 
-    /* ─── SCROLL REVEAL ─── */
-    .reveal {
-      opacity: 0; transform: translateY(24px);
-      transition: opacity 0.62s cubic-bezier(0.32,0.72,0,1), transform 0.62s cubic-bezier(0.32,0.72,0,1);
+    #globe {
+      width: 100%;
+      height: 100%;
     }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
 
-    /* ─── RESPONSIVE ─── */
-    @media (max-width: 1024px) {
-      .climate-grid { grid-template-columns: repeat(2,1fr); }
-      .movers-grid  { grid-template-columns: repeat(3,1fr); }
-      .notes-grid   { grid-template-columns: repeat(2,1fr); }
-    }
+    /* ── Mobile ── */
     @media (max-width: 768px) {
-      #navbar { padding: 0 20px; }
-      #greeting { flex-direction: column; gap: 10px; padding: 28px 24px; }
-      .greeting-meta { text-align: left; }
-      .dark-card { padding: 40px 24px; border-radius: 28px; }
-      #breaking, #movers, #notes { padding: 52px 24px; }
-      .climate-grid { grid-template-columns: 1fr; }
-      .movers-grid  { grid-template-columns: repeat(2,1fr); }
-      .notes-grid   { grid-template-columns: 1fr; }
-      .footer-inner { grid-template-columns: 1fr; gap: 28px; }
-      #footer { padding: 40px 24px; }
-      .events-table th:nth-child(5), .events-table td:nth-child(5),
-      .events-table th:nth-child(6), .events-table td:nth-child(6) { display: none; }
-    }
-    @media (max-width: 480px) {
-      .movers-grid { grid-template-columns: 1fr 1fr; }
+      nav {
+        padding: 24px 24px;
+      }
+
+      .logo {
+        font-size: 15px;
+      }
+
+      main {
+        padding-top: 30vh;
+      }
+
+      .headline-display {
+        font-size: clamp(20px, 5.5vw, 32px);
+        padding: 0 24px;
+      }
+
+      #globe-container {
+        width: 200vw;
+        height: 200vw;
+        bottom: calc(-200vw + 30vh);
+      }
     }
   </style>
 </head>
 <body>
 
-<!-- ═══ NAVBAR ═══ -->
-<nav id="navbar">
-  <a href="#" class="logo"><span class="sl">/</span><span class="br">NOCTURN</span> <span class="su">NEWS</span></a>
-</nav>
-
-<!-- ═══ PRICE BANNER ═══ -->
-<div id="price-banner">
-  <div class="ticker-track" id="ticker"></div>
-</div>
-
-<!-- ═══ GREETING ═══ -->
-<section id="greeting">
-  <h2 class="greeting-name">Back again, Kasper</h2>
-  <div class="greeting-meta" id="greeting-date"></div>
-</section>
-
-<!-- ═══ WEEKLY RECAP ═══ -->
-<div class="dark-section">
-  <div class="dark-card reveal">
-    <div class="recap-meta-row">
-      <span class="section-label">Weekly Market Recap</span>
-      <span class="recap-ts" id="recap-ts"></span>
+  <nav>
+    <div class="logo">
+      <span class="slash">/</span><span class="nocturn">NOCTURN</span>&nbsp;<span class="news">NEWS</span>
     </div>
-    <div class="recap-headline">
-      <span class="i">Markets under pressure</span><br>
-      <span class="cg">as tensions escalate</span>
+  </nav>
+
+  <main>
+    <div class="headline">
+      <span class="headline-display" id="headline-text"></span>
     </div>
-    <div class="story-list">
-      <div class="story-item reveal">
-        <div class="story-tag">Geopolitical</div>
-        <div class="story-head">Ceasefire Rejected and Oil Pressured</div>
-        <p class="story-body">Hopes for an imminent US-Iran peace deal have faded after Hezbollah militants rejected a ceasefire agreement between Israel and Lebanon. The ongoing stalemate has kept the Strait of Hormuz effectively closed to tanker traffic.</p>
-      </div>
-      <div class="story-item reveal" style="transition-delay:80ms">
-        <div class="story-tag">Technology</div>
-        <div class="story-head">Tech Rotation and Government AI Stakes</div>
-        <p class="story-body">A disappointing earnings report from chip giant Broadcom triggered a sharp sell-off in major semiconductor stocks, sending companies like Micron and Intel sharply lower. Meanwhile, senior United States officials reportedly held early discussions with AI leaders regarding government equity stakes.</p>
-      </div>
-      <div class="story-item reveal" style="transition-delay:160ms">
-        <div class="story-tag">Macro</div>
-        <div class="story-head">Jobs Data and Fed Policy</div>
-        <p class="story-body">With the crucial Nonfarm Payrolls report wrapping up the week, markets are heavily focused on the ongoing state of the labour market. Due to persistent inflation risks, the Federal Reserve is currently expected to keep interest rates steady for the rest of the year.</p>
-      </div>
-    </div>
+    <p class="coming-soon">Coming Soon</p>
+  </main>
+
+  <div id="globe-container">
+    <svg id="globe"></svg>
   </div>
-</div>
 
-<!-- ═══ BREAKING NEWS ═══ -->
-<section id="breaking">
-  <div class="breaking-inner">
-    <div class="eyebrow reveal" style="display:block;margin-bottom:10px;">Breaking News</div>
-    <h2 class="sh sh-light reveal">
-      <span class="i">Latest from</span><span class="cg"> the wire</span>
-    </h2>
-    <div class="filter-row reveal" id="filter-row">
-      <button class="fp active" data-filter="all">All</button>
-      <button class="fp" data-filter="geopolitical">Geopolitical</button>
-      <button class="fp" data-filter="macro">Macro</button>
-      <button class="fp" data-filter="commodities">Commodities</button>
-      <button class="fp" data-filter="forex">Forex</button>
-      <button class="fp" data-filter="equities">Equities</button>
-      <button class="fp" data-filter="crypto">Crypto</button>
-    </div>
-    <div class="news-feed" id="news-feed">
-      <div class="nc reveal" data-impact="HIGH" data-category="geopolitical">
-        <div class="nc-top"><span class="nc-src">Reuters</span><span class="badge HIGH">HIGH</span><span class="nc-time">4 min ago</span></div>
-        <div class="nc-head">Iran Closes Strait of Hormuz to US-Flagged Vessels Amid Escalating Standoff</div>
-        <div class="nc-sum">Iran's Revolutionary Guard has issued a formal closure notice for US-flagged tanker traffic through the Strait of Hormuz, threatening 20% of global oil supply routes.</div>
-        <div class="nc-bot"><span class="tag">USOIL</span><span class="tag">XAUUSD</span><span class="move down">−1.24%</span></div>
-      </div>
-      <div class="nc reveal" style="transition-delay:60ms" data-impact="HIGH" data-category="macro">
-        <div class="nc-top"><span class="nc-src">Bloomberg</span><span class="badge HIGH">HIGH</span><span class="nc-time">18 min ago</span></div>
-        <div class="nc-head">Nonfarm Payrolls Miss Sharply — 142K vs 185K Forecast, Unemployment Ticks to 4.2%</div>
-        <div class="nc-sum">The June jobs report delivered a significant downside surprise, fuelling speculation that the Fed may be forced to cut rates sooner than projected markets currently price.</div>
-        <div class="nc-bot"><span class="tag">EURUSD</span><span class="tag">US30</span><span class="tag">NAS100</span><span class="move up">+0.63%</span></div>
-      </div>
-      <div class="nc reveal" style="transition-delay:120ms" data-impact="MEDIUM" data-category="commodities">
-        <div class="nc-top"><span class="nc-src">Financial Times</span><span class="badge MEDIUM">MEDIUM</span><span class="nc-time">31 min ago</span></div>
-        <div class="nc-head">Gold Surges Past $3,280 as Safe-Haven Demand Accelerates on Geopolitical Fears</div>
-        <div class="nc-sum">Spot gold broke through key technical resistance as investor positioning shifted defensively, with fund flows into bullion ETFs hitting a six-month high this session.</div>
-        <div class="nc-bot"><span class="tag">XAUUSD</span><span class="tag">XAGUSD</span><span class="move up">+0.84%</span></div>
-      </div>
-      <div class="nc reveal" style="transition-delay:180ms" data-impact="MEDIUM" data-category="equities">
-        <div class="nc-top"><span class="nc-src">WSJ</span><span class="badge MEDIUM">MEDIUM</span><span class="nc-time">47 min ago</span></div>
-        <div class="nc-head">Broadcom Earnings Miss Sends Semiconductor Sector Into Sharp Decline</div>
-        <div class="nc-sum">A revenue shortfall of roughly $400 million versus consensus estimates triggered cascading losses across the chip supply chain, with Micron Technology and Intel both falling more than 4%.</div>
-        <div class="nc-bot"><span class="tag">NAS100</span><span class="tag">US30</span><span class="move down">−1.08%</span></div>
-      </div>
-      <div class="nc reveal" style="transition-delay:240ms" data-impact="MEDIUM" data-category="forex">
-        <div class="nc-top"><span class="nc-src">Forexlive</span><span class="badge MEDIUM">MEDIUM</span><span class="nc-time">1 hr ago</span></div>
-        <div class="nc-head">ECB's Lagarde Signals Further Rate Flexibility as Eurozone Disinflation Continues</div>
-        <div class="nc-sum">European Central Bank president Christine Lagarde hinted at ongoing willingness to adjust the pace of cuts, citing falling core CPI as evidence of sustained disinflation progress.</div>
-        <div class="nc-bot"><span class="tag">EURUSD</span><span class="tag">GBPUSD</span><span class="move up">+0.21%</span></div>
-      </div>
-      <div class="nc reveal" style="transition-delay:300ms" data-impact="LOW" data-category="crypto">
-        <div class="nc-top"><span class="nc-src">CoinDesk</span><span class="badge LOW">LOW</span><span class="nc-time">1 hr 22 min ago</span></div>
-        <div class="nc-head">Bitcoin Holds Above $67,000 as Institutional Spot ETF Inflows Reach Weekly Record</div>
-        <div class="nc-sum">A fourth consecutive week of positive institutional flows into US spot Bitcoin ETFs has helped sustain price levels despite broader risk-off sentiment in traditional markets.</div>
-        <div class="nc-bot"><span class="tag">BTCUSD</span><span class="move up">+2.14%</span></div>
-      </div>
-      <div class="nc reveal" style="transition-delay:360ms" data-impact="HIGH" data-category="geopolitical">
-        <div class="nc-top"><span class="nc-src">AP News</span><span class="badge HIGH">HIGH</span><span class="nc-time">2 hr ago</span></div>
-        <div class="nc-head">G7 Emergency Meeting Called to Coordinate Response to Middle East Energy Crisis</div>
-        <div class="nc-sum">Finance ministers from the Group of Seven nations will convene an emergency virtual session to discuss coordinated strategic petroleum reserve releases and potential sanctions escalation.</div>
-        <div class="nc-bot"><span class="tag">USOIL</span><span class="tag">XAUUSD</span><span class="tag">USDJPY</span><span class="move down">−0.34%</span></div>
-      </div>
-      <div class="nc reveal" style="transition-delay:420ms" data-impact="MEDIUM" data-category="macro">
-        <div class="nc-top"><span class="nc-src">CNBC</span><span class="badge MEDIUM">MEDIUM</span><span class="nc-time">2 hr 40 min ago</span></div>
-        <div class="nc-head">Fed's Williams Reaffirms Data Dependency, Refuses to Rule Out December Cut</div>
-        <div class="nc-sum">New York Fed president John Williams stated the central bank remains fully data dependent and declined to preclude the possibility of a December rate reduction if incoming economic indicators deteriorate further.</div>
-        <div class="nc-bot"><span class="tag">EURUSD</span><span class="tag">US30</span><span class="move up">+0.41%</span></div>
-      </div>
-    </div>
-  </div>
-</section>
+  <script>
+    const SIZE = 1000;
+    const CX = SIZE / 2;
+    const CY = SIZE / 2;
+    const RADIUS = SIZE / 2 - 1;
 
-<!-- ═══ MARKET CLIMATE ═══ -->
-<div class="dark-section">
-  <div class="dark-card reveal">
-    <div class="section-label" style="margin-bottom:8px;">Market Climate</div>
-    <h2 class="sh sh-light"><span class="i">Current</span><span class="cg"> conditions at a glance</span></h2>
-    <div class="climate-grid">
-      <div class="cc reveal">
-        <div class="live-dot"></div>
-        <div class="cc-sym">XAUUSD</div>
-        <div class="cc-name">Gold / US Dollar</div>
-        <span class="cc-lbl lbl-terra">USD Dominant</span>
-        <ul class="cc-bullets">
-          <li><span class="dot" style="background:var(--terra)"></span>Dollar strength capping upside beyond $3,280 resistance</li>
-          <li><span class="dot" style="background:var(--orange)"></span>Middle East risk premium firmly embedded in spot price</li>
-          <li><span class="dot" style="background:var(--teal)"></span>ETF inflows providing structural demand floor near $3,200</li>
-        </ul>
-      </div>
-      <div class="cc reveal" style="transition-delay:80ms">
-        <div class="live-dot"></div>
-        <div class="cc-sym">EURUSD</div>
-        <div class="cc-name">Euro / US Dollar</div>
-        <span class="cc-lbl lbl-orange">Rate Driven</span>
-        <ul class="cc-bullets">
-          <li><span class="dot" style="background:var(--terra)"></span>ECB-Fed rate differential narrowing on softer US data</li>
-          <li><span class="dot" style="background:var(--orange)"></span>Eurozone services PMI holding above contraction at 52.1</li>
-          <li><span class="dot" style="background:var(--teal)"></span>Key resistance at 1.0900 needs a catalyst to break</li>
-        </ul>
-      </div>
-      <div class="cc reveal" style="transition-delay:160ms">
-        <div class="live-dot"></div>
-        <div class="cc-sym">NAS100</div>
-        <div class="cc-name">Nasdaq 100 Index</div>
-        <span class="cc-lbl lbl-teal">Risk On</span>
-        <ul class="cc-bullets">
-          <li><span class="dot" style="background:var(--teal)"></span>AI infrastructure spend narrative remains broadly intact</li>
-          <li><span class="dot" style="background:var(--terra)"></span>Semiconductor sub-sector rotation creating short-term drag</li>
-          <li><span class="dot" style="background:var(--orange)"></span>Earnings season beat rate at 73% above five-year average</li>
-        </ul>
-      </div>
-      <div class="cc reveal" style="transition-delay:240ms">
-        <div class="live-dot"></div>
-        <div class="cc-sym">USOIL</div>
-        <div class="cc-name">WTI Crude Oil</div>
-        <span class="cc-lbl lbl-terra">Geopolitical</span>
-        <ul class="cc-bullets">
-          <li><span class="dot" style="background:var(--terra)"></span>Hormuz closure risk pricing approximately $4 premium per barrel</li>
-          <li><span class="dot" style="background:var(--orange)"></span>OPEC+ compliance monitoring elevated amid quota compliance risks</li>
-          <li><span class="dot" style="background:var(--teal)"></span>US SPR release coordination could cap extreme upside moves</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</div>
+    const svg = d3.select('#globe')
+      .attr('viewBox', `0 0 ${SIZE} ${SIZE}`)
+      .attr('preserveAspectRatio', 'xMidYMid meet');
 
-<!-- ═══ BIGGEST MOVERS ═══ -->
-<section id="movers">
-  <div class="movers-inner">
-    <div class="eyebrow reveal" style="display:block;margin-bottom:10px;">Biggest Movers</div>
-    <h2 class="sh sh-light reveal"><span class="i">Instruments</span><span class="cg"> making moves today</span></h2>
-    <div class="movers-grid">
-      <div class="mc reveal">
-        <div class="mc-sym">USOIL</div>
-        <div class="mc-head">Iran formally closes Hormuz to US tankers</div>
-        <div class="mc-chg down">−3.41%</div>
-        <svg class="sparkline" viewBox="0 0 100 34" fill="none"><polyline points="0,8 15,10 30,9 45,12 60,18 70,22 80,26 90,30 100,33" stroke="var(--terra)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><polyline points="0,8 15,10 30,9 45,12 60,18 70,22 80,26 90,30 100,33 100,34 0,34" fill="rgba(184,107,90,0.07)"/></svg>
-        <div class="mc-time">2 hr ago</div>
-      </div>
-      <div class="mc reveal" style="transition-delay:60ms">
-        <div class="mc-sym">XAUUSD</div>
-        <div class="mc-head">Safe-haven demand surges on Middle East fears</div>
-        <div class="mc-chg up">+1.84%</div>
-        <svg class="sparkline" viewBox="0 0 100 34" fill="none"><polyline points="0,30 15,28 30,26 45,22 55,18 68,13 80,9 90,6 100,3" stroke="var(--teal)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><polyline points="0,30 15,28 30,26 45,22 55,18 68,13 80,9 90,6 100,3 100,34 0,34" fill="rgba(78,163,137,0.07)"/></svg>
-        <div class="mc-time">1 hr ago</div>
-      </div>
-      <div class="mc reveal" style="transition-delay:120ms">
-        <div class="mc-sym">BTCUSD</div>
-        <div class="mc-head">ETF inflows hit weekly record amid institutional bid</div>
-        <div class="mc-chg up">+2.14%</div>
-        <svg class="sparkline" viewBox="0 0 100 34" fill="none"><polyline points="0,28 12,24 25,26 38,20 50,16 62,18 75,11 88,7 100,4" stroke="var(--teal)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><polyline points="0,28 12,24 25,26 38,20 50,16 62,18 75,11 88,7 100,4 100,34 0,34" fill="rgba(78,163,137,0.07)"/></svg>
-        <div class="mc-time">3 hr ago</div>
-      </div>
-      <div class="mc reveal" style="transition-delay:180ms">
-        <div class="mc-sym">NAS100</div>
-        <div class="mc-head">Broadcom miss triggers semiconductor rotation</div>
-        <div class="mc-chg down">−1.08%</div>
-        <svg class="sparkline" viewBox="0 0 100 34" fill="none"><polyline points="0,10 15,8 28,12 40,14 52,18 64,22 76,24 88,28 100,30" stroke="var(--terra)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><polyline points="0,10 15,8 28,12 40,14 52,18 64,22 76,24 88,28 100,30 100,34 0,34" fill="rgba(184,107,90,0.07)"/></svg>
-        <div class="mc-time">47 min ago</div>
-      </div>
-      <div class="mc reveal" style="transition-delay:240ms">
-        <div class="mc-sym">EURUSD</div>
-        <div class="mc-head">NFP miss boosts rate cut bets, Euro lifts</div>
-        <div class="mc-chg up">+0.54%</div>
-        <svg class="sparkline" viewBox="0 0 100 34" fill="none"><polyline points="0,26 18,24 32,22 46,20 58,17 70,14 82,11 92,9 100,7" stroke="var(--teal)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><polyline points="0,26 18,24 32,22 46,20 58,17 70,14 82,11 92,9 100,7 100,34 0,34" fill="rgba(78,163,137,0.07)"/></svg>
-        <div class="mc-time">18 min ago</div>
-      </div>
-    </div>
-  </div>
-</section>
+    // Clip path so land paths don't overflow the sphere
+    const defs = svg.append('defs');
+    defs.append('clipPath')
+      .attr('id', 'sphere-clip')
+      .append('circle')
+        .attr('cx', CX)
+        .attr('cy', CY)
+        .attr('r', RADIUS);
 
-<!-- ═══ SCHEDULED EVENTS ═══ -->
-<div class="dark-section">
-  <div class="dark-card reveal">
-    <div class="section-label" style="margin-bottom:8px;">Today's Schedule</div>
-    <h2 class="sh sh-light"><span class="i">Upcoming</span><span class="cg"> economic events</span></h2>
-    <table class="events-table">
-      <thead>
-        <tr><th>Time (UTC)</th><th>Currency</th><th>Event</th><th>Impact</th><th>Forecast</th><th>Previous</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="ev-time">08:30</td>
-          <td><span class="ccy"><span class="flag" style="background:linear-gradient(#B22234 33%,#fff 33% 66%,#3C3B6E 66%)"></span>USD</span></td>
-          <td class="ev-name">Nonfarm Payrolls (Jun)</td>
-          <td><div class="i-dots"><span class="id id-high"></span><span class="id id-high"></span><span class="id id-high"></span></div></td>
-          <td class="ev-val">185K</td><td class="ev-val">139K</td>
-        </tr>
-        <tr>
-          <td class="ev-time">10:00</td>
-          <td><span class="ccy"><span class="flag" style="background:linear-gradient(#003087 33%,#fff 33% 66%,#003087 66%)"></span>EUR</span></td>
-          <td class="ev-name">ECB Rate Decision</td>
-          <td><div class="i-dots"><span class="id id-high"></span><span class="id id-high"></span><span class="id id-high"></span></div></td>
-          <td class="ev-val">3.40%</td><td class="ev-val">3.65%</td>
-        </tr>
-        <tr>
-          <td class="ev-time">12:30</td>
-          <td><span class="ccy"><span class="flag" style="background:linear-gradient(#B22234 33%,#fff 33% 66%,#3C3B6E 66%)"></span>USD</span></td>
-          <td class="ev-name">Core CPI (MoM)</td>
-          <td><div class="i-dots"><span class="id id-high"></span><span class="id id-high"></span><span class="id id-empty"></span></div></td>
-          <td class="ev-val">0.2%</td><td class="ev-val">0.3%</td>
-        </tr>
-        <tr>
-          <td class="ev-time">14:00</td>
-          <td><span class="ccy"><span class="flag" style="background:linear-gradient(#B22234 33%,#fff 33% 66%,#3C3B6E 66%)"></span>USD</span></td>
-          <td class="ev-name">Fed Chair Powell Speech</td>
-          <td><div class="i-dots"><span class="id id-high"></span><span class="id id-mid"></span><span class="id id-empty"></span></div></td>
-          <td class="ev-val">—</td><td class="ev-val">—</td>
-        </tr>
-        <tr>
-          <td class="ev-time">16:30</td>
-          <td><span class="ccy"><span class="flag" style="background:linear-gradient(#B22234 33%,#fff 33% 66%,#3C3B6E 66%)"></span>USD</span></td>
-          <td class="ev-name">Initial Jobless Claims</td>
-          <td><div class="i-dots"><span class="id id-mid"></span><span class="id id-empty"></span><span class="id id-empty"></span></div></td>
-          <td class="ev-val">220K</td><td class="ev-val">231K</td>
-        </tr>
-        <tr>
-          <td class="ev-time">19:00</td>
-          <td><span class="ccy"><span class="flag" style="background:linear-gradient(#B22234 33%,#fff 33% 66%,#3C3B6E 66%)"></span>USD</span></td>
-          <td class="ev-name">GDP Annualised (Q1 Final)</td>
-          <td><div class="i-dots"><span class="id id-high"></span><span class="id id-high"></span><span class="id id-empty"></span></div></td>
-          <td class="ev-val">1.4%</td><td class="ev-val">1.6%</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+    const projection = d3.geoOrthographic()
+      .scale(RADIUS)
+      .translate([CX, CY])
+      .rotate([20, -25, 0])
+      .clipAngle(90);
 
-<!-- ═══ COMMUNITY NOTES ═══ -->
-<section id="notes">
-  <div class="notes-inner">
-    <div class="eyebrow reveal" style="display:block;margin-bottom:10px;">Community Notes</div>
-    <h2 class="sh sh-light reveal"><span class="i">Context from</span><span class="cg"> the community</span></h2>
-    <div class="notes-grid">
-      <div class="note reveal">
-        <div class="note-orig">"Gold Surges Past $3,280 as Safe-Haven Demand Accelerates on Geopolitical Fears"</div>
-        <div class="note-txt">Worth noting the $3,280 level has acted as resistance three times in the past six weeks. A clean daily close above it would be technically significant for continuation.</div>
-        <div class="note-foot"><span class="note-hlp">41 people found this helpful</span><span class="nbadge nb-ctx">Context</span></div>
-      </div>
-      <div class="note reveal" style="transition-delay:80ms">
-        <div class="note-orig">"Iran Closes Strait of Hormuz to US-Flagged Vessels Amid Escalating Standoff"</div>
-        <div class="note-txt">The closure notice applies to flagged vessels only, not registry. Many tankers flying non-US flags with US beneficial owners may still be affected under secondary sanctions interpretation.</div>
-        <div class="note-foot"><span class="note-hlp">87 people found this helpful</span><span class="nbadge nb-cor">Correction</span></div>
-      </div>
-      <div class="note reveal" style="transition-delay:160ms">
-        <div class="note-orig">"Fed's Williams Reaffirms Data Dependency, Refuses to Rule Out December Cut"</div>
-        <div class="note-txt">Williams' comments were delivered at a private function and later confirmed by the NY Fed press office. The full transcript is now available on the NY Fed website for those wanting exact wording.</div>
-        <div class="note-foot"><span class="note-hlp">29 people found this helpful</span><span class="nbadge nb-upd">Update</span></div>
-      </div>
-    </div>
-  </div>
-</section>
+    const geoPath = d3.geoPath().projection(projection);
 
-<!-- ═══ FOOTER ═══ -->
-<footer id="footer">
-  <div class="footer-inner">
-    <div>
-      <a href="#" class="logo" style="display:inline-block;margin-bottom:4px;"><span class="sl">/</span><span class="br">NOCTURN</span> <span class="su">NEWS</span></a>
-      <p class="footer-logo-sub">The fastest financial news for traders.</p>
-    </div>
-    <nav class="footer-col">
-      <a href="#">Home</a>
-      <a href="#breaking">Breaking News</a>
-      <a href="#schedule">Scheduled News</a>
-      <a href="#movers">Biggest Movers</a>
-      <a href="#climate">Market Climate</a>
-    </nav>
-    <div class="footer-col">
-      <a href="#">Privacy Policy</a>
-      <a href="#">Terms of Service</a>
-    </div>
-  </div>
-  <p class="footer-copy">© Nocturn Pty Ltd 2026. All rights reserved.</p>
-</footer>
+    // ── Sphere outline ──
+    const circumference = 2 * Math.PI * RADIUS;
+    svg.append('circle')
+      .attr('cx', CX)
+      .attr('cy', CY)
+      .attr('r', RADIUS)
+      .attr('fill', 'none')
+      .attr('stroke', '#1a1a1c')
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', circumference)
+      .attr('stroke-dashoffset', circumference)
+      .transition()
+        .duration(900)
+        .ease(d3.easeLinear)
+        .attr('stroke-dashoffset', 0);
 
-<script>
-  /* ── NAV HIDE ON SCROLL ── */
-  let lastY = 0;
-  window.addEventListener('scroll', () => {
-    const y = window.scrollY;
-    document.getElementById('navbar').classList.toggle('hidden', y > lastY && y > 80);
-    lastY = y;
-  }, { passive: true });
+    // ── Land paths ──
+    const landGroup = svg.append('g')
+      .attr('clip-path', 'url(#sphere-clip)');
 
-  /* ── LIVE CLOCK ── */
-  function updateClock() {
-    const d = new Date();
-    const date = d.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    const time = d.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    document.getElementById('greeting-date').textContent = date + '  ·  ' + time;
-  }
-  updateClock();
-  setInterval(updateClock, 1000);
+    fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+      .then(r => r.json())
+      .then(world => {
+        const land = topojson.feature(world, world.objects.land);
 
-  /* ── RECAP TIMESTAMP ── */
-  (function() {
-    const d = new Date();
-    document.getElementById('recap-ts').textContent =
-      d.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) + '  ·  ' +
-      d.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
-  })();
+        const landPath = landGroup.append('path')
+          .datum(land)
+          .attr('d', geoPath)
+          .attr('fill', 'none')
+          .attr('stroke', '#1a1a1c')
+          .attr('stroke-width', 0.75)
+          .attr('stroke-linejoin', 'round')
+          .attr('stroke-linecap', 'round');
 
-  /* ── TICKER ── */
-  const tickers = [
-    { sym: 'XAUUSD', px: '3241.50', chg: '+0.84%', up: true },
-    { sym: 'EURUSD', px: '1.0842',  chg: '+0.21%', up: true },
-    { sym: 'USDJPY', px: '149.23',  chg: '−0.34%', up: false },
-    { sym: 'GBPUSD', px: '1.2634',  chg: '+0.18%', up: true },
-    { sym: 'NAS100', px: '19840',   chg: '+0.63%', up: true },
-    { sym: 'US30',   px: '42180',   chg: '+0.41%', up: true },
-    { sym: 'USOIL',  px: '73.42',   chg: '−1.24%', up: false },
-    { sym: 'BTCUSD', px: '67430',   chg: '+2.14%', up: true },
-    { sym: 'XAGUSD', px: '32.18',   chg: '+1.02%', up: true },
-    { sym: 'AUDUSD', px: '0.6521',  chg: '−0.29%', up: false },
-  ];
-  const itemHTML = tickers.map(t =>
-    `<div class="ticker-item"><span class="t-sym">${t.sym}</span><span class="t-px">${t.px}</span><span class="t-chg ${t.up?'up':'down'}">${t.chg}</span></div>`
-  ).join('');
-  document.getElementById('ticker').innerHTML = itemHTML + itemHTML;
+        const totalLength = landPath.node().getTotalLength();
 
-  /* ── FILTER PILLS ── */
-  const fr = document.getElementById('filter-row');
-  const cards = document.querySelectorAll('.nc');
-  fr.addEventListener('click', e => {
-    const pill = e.target.closest('.fp');
-    if (!pill) return;
-    fr.querySelectorAll('.fp').forEach(p => p.classList.remove('active'));
-    pill.classList.add('active');
-    const f = pill.dataset.filter;
-    cards.forEach(c => {
-      const show = f === 'all' || c.dataset.category === f;
-      c.style.opacity      = show ? '1' : '0';
-      c.style.transform    = show ? '' : 'scale(0.97)';
-      c.style.pointerEvents = show ? '' : 'none';
-      c.style.height       = show ? '' : '0';
-      c.style.padding      = show ? '' : '0';
-      c.style.margin       = show ? '' : '0';
-      c.style.overflow     = show ? '' : 'hidden';
-      c.style.transition   = 'opacity 0.2s, transform 0.2s, height 0.2s';
-    });
-  });
+        landPath
+          .attr('stroke-dasharray', totalLength)
+          .attr('stroke-dashoffset', totalLength)
+          .transition()
+            .delay(300)
+            .duration(3200)
+            .ease(d3.easeLinear)
+            .attr('stroke-dashoffset', 0)
+            .on('end', () => {
+              landPath
+                .attr('stroke-dasharray', null)
+                .attr('stroke-dashoffset', null);
+            });
 
-  /* ── SCROLL REVEAL ── */
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-  }, { threshold: 0.07 });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-</script>
+        // Rotation starts immediately alongside the draw animation
+        startRotation(landPath);
+      });
+
+    // ── Typing animation ──
+    (function typeHeadline() {
+      const container = document.getElementById('headline-text');
+      const segments = [
+        { text: "The World's ", bold: false },
+        { text: 'Fastest',      bold: true  },
+        { text: ' Financial News.', bold: false }
+      ];
+
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      container.appendChild(cursor);
+
+      let si = 0, ci = 0, currentSpan = null;
+
+      function tick() {
+        if (si >= segments.length) {
+          setTimeout(() => cursor.style.display = 'none', 1200);
+          return;
+        }
+        const seg = segments[si];
+        if (ci === 0) {
+          currentSpan = document.createElement('span');
+          if (seg.bold) currentSpan.className = 'headline-bold';
+          container.insertBefore(currentSpan, cursor);
+        }
+        currentSpan.textContent += seg.text[ci++];
+        if (ci >= seg.text.length) { si++; ci = 0; }
+        setTimeout(tick, 55);
+      }
+
+      setTimeout(tick, 300);
+    })();
+
+    function startRotation(landPath) {
+      let angle = 20;
+      (function rotate() {
+        angle += 0.12;
+        projection.rotate([angle, -25, 0]);
+        landPath.attr('d', geoPath);
+        requestAnimationFrame(rotate);
+      })();
+    }
+  </script>
+
 </body>
 </html>
